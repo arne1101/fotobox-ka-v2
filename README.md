@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 
 
@@ -756,3 +757,7 @@
   </body>
 </html>
 
+=======
+# fotobox-ka-v2
+New version of my raspberry pi photobooth controller
+>>>>>>> 436999034f52d49bfb106909a3684430e53fc7d9
