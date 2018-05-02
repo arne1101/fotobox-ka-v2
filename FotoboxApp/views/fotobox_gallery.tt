@@ -1,0 +1,45 @@
+     <div id="dropHelp" data-dropdown-content class="f-dropdown content medium">
+		 <p><b>Hilfe</b></p>
+		 <p><img src="<% request.uri_base %>/images/photo_start_1.png" style="height:32px;">
+		    <br />Nimmt ein einzelnes Foto auf und zeigt dieses sofort an.
+		 </p>
+		 <p><img src="<% request.uri_base %>/images/photo_start_4.png" style="height:32px;">
+		    <br />Erstellt eine Collage aus 4 Fotos. Es werden nacheinander 4 Fotos aufgenommen
+		    und einzeln angezeigt. Am Ende werden alle 4 Fotos zu einer Collage zusammengef&uuml;gt.
+		 </p>
+		 <p><b>Galerie</b></p>
+		 <p>
+		    Klicke auf ein Foto um es gro&szlig; anzuzeigen. In der Gro&szligansicht stehen dir alle Funktionen (Wifi-Share, Facebook-Share und Mail) zur verf&uuml;gung.
+		 </p>
+     </div>
+ 
+ <div class="row margin-10-top">
+      <div class="small-12 columns">
+		<div class="small-6 columns">
+		<a href="<% request.uri_base %>/new?strip=0"><img src="<% request.uri_base %>/images/photo_start_1.png" class="h64 w64 margin-30-right"></a>
+		<a href="<% request.uri_base %>/new?strip=1"><img src="<% request.uri_base %>/images/photo_start_4.png" class="h64 w64 margin-30-right"></a>
+		</div>
+		<div class="small-6 columns" style="text-align:right;">
+		<a href="#" data-dropdown="dropHelp" data-options="align:top"><img src="<% request.uri_base %>/images/help.png"class="h64 w64"></a>
+		</div>
+	        </div>
+    </div>
+    
+    <div class="row margin-10-top">
+	<div class="small-12 columns">
+		<% gallery %>
+	</div>
+    </div>
+
+    
+
+<script>
+   			    $('.qrCode').qrcode({
+				    render: 'image',
+				    width: 150,
+				    height: 150,
+				    fill: '#000000',
+				    background: null,
+				    text: '<% request.uri_base %>/gallery/<% foto_filename %>'
+			    });
+</script>

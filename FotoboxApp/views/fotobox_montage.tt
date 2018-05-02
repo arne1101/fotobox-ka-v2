@@ -1,0 +1,26 @@
+    <div class="row margin-10-top height-32">
+     <div class="small-12 columns"><p class="wait"></p></div>
+    </div>
+    <div class="row margin-10-top">
+	<div class="small-12 columns">
+	<ul class="small-block-grid-2">
+	<li style="border:2px solid #fff; padding:0;"><img src="<% request.uri_base %>/gallery/<% foto_filename1 %>"></li>
+	<li style="border:2px solid #fff; padding:0;"><img src="<% request.uri_base %>/gallery/<% foto_filename2 %>"></li>
+	<li style="border:2px solid #fff; padding:0;"><img src="<% request.uri_base %>/gallery/<% foto_filename3 %>"></li>
+	<li style="border:2px solid #fff; padding:0;"><img src="<% request.uri_base %>/gallery/<% foto_filename4 %>"></li>
+	</ul>
+	</div>
+    </div>
+  	
+<script>
+     var timer = 4;
+     if(timer>0) {timer--;}
+     var interval = setInterval(function() {
+     if (timer == 0) {
+      $('.wait').html('<h2>Lade ...</h2>');
+      location.href="<% redirect_uri %>";
+     } else {
+      timer--;
+     }
+     }, 1000);
+</script>

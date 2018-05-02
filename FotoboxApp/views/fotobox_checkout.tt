@@ -1,0 +1,35 @@
+   <div class="row margin-10-top">
+      <div class="small-12 columns">
+		<div class="small-6 columns">
+		</div>
+		<div class="small-6 columns" style="text-align:right;">
+		</div>
+		
+		  </div>
+    </div>
+
+    <div class="row margin-10-top">
+	<div class="small-12 columns status">
+		<h3><b><% message %></b></h3>
+	</div>
+    </div>
+
+    <div class="row margin-10-top">
+	<div class="small-6 columns">
+	   <p><% text %></p><br />
+	   <p><a href="/checkout"><img src="<% request.uri_base %>/images/arrow_left.png" class="h64 w64 margin-30-right"></a></p>
+	   <div id="status">
+	   <br />
+	   <% code %>
+	   </div>
+	   
+	   
+	</div>
+	<div class="small-6 columns">
+		<img class="foto-strip-small" src="<% request.uri_base %>/gallery/<% foto_filename %>">
+	</div>
+    </div>
+
+
+
+

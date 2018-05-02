@@ -1,0 +1,58 @@
+   <div class="row margin-10-top">
+      <div class="small-12 columns">
+		<div class="small-11 columns"></div>
+		<div class="small-1 columns">
+		  <a href="#" data-dropdown="dropHelp" data-options="align:top"><img src="<% request.uri_base %>/images/help.png"></a>     
+		</div>
+       </div>
+    </div>
+    
+    <div class="row margin-30-top">
+      <div class="small-12 small-centered columns">
+        <center><h3><b>Was willst du tun?</b></h3></center>
+      </div>
+    </div>
+    
+    <div class="row margin-30-top">
+      <div class="small-2 small columns"><p></p></div>
+      <div class="small-4 small columns">
+	    <center>
+	      <p><a href="chooseLogo"><img src="<% request.uri_base %>/images/photo_start_1.png"></a></p>      
+	    </center>
+      </div>
+     <div class="small-4 small columns">
+	    <center>
+	      <p><a href="gallery"><img src="<% request.uri_base %>/images/gallery_start.png"></a></p>    
+	    </center>
+      </div>
+      <div class="small-2 small columns"><p></p></div>
+    </div>
+    
+     <div class="row">
+    <div class="small-12 small columns">
+    <div class="edition semi"></div>
+    </div>
+    
+    </div>
+    <div class="row">
+    <div class="small-12 small columns">
+    <div class="branding semi"></div>
+    </div>
+    </div>
+    
+    <div id="dropHelp" data-dropdown-content class="f-dropdown content medium">
+		 <p><b>Hilfe</b></p>
+		 <p><img src="<% request.uri_base %>/images/photo_start_1.png" style="height:32px;">
+		    <br />Nimmt ein einzelnes Foto auf und zeigt dieses sofort an.
+		 </p>
+		 <p><img src="<% request.uri_base %>/images/photo_start_4.png" style="height:32px;">
+		    <br />Erstellt eine Collage aus 4 Fotos. Es werden nacheinander 4 Fotos aufgenommen
+		    und einzeln angezeigt. Am Ende werden alle 4 Fotos zu einer Collage zusammengef&uuml;gt.
+		 </p>
+		 <p><img src="<% request.uri_base %>/images/gallery.png" style="height:32px;">
+		    <br />Gallerie. Schaue dir alle Fotos an.
+		 </p>
+     </div>
+    
+    
+

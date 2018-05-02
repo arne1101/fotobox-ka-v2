@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- For iOS web apps -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="fotobox">
+<meta name="viewport" content="minimal-ui, width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+
+<title>Fotobox</title>
+<link rel="stylesheet" href="<% request.uri_base %>/css/foundation.css" />
+<link rel="stylesheet" href="<% request.uri_base %>/css/custom.css" />
+<script type="text/javascript">
+
+if(("standalone" in window.navigator) && window.navigator.standalone){
+
+var noddy, remotes = false;
+
+document.addEventListener('click', function(event) {
+
+noddy = event.target;
+
+while(noddy.nodeName !== "A" && noddy.nodeName !== "HTML") {
+noddy = noddy.parentNode;
+}
+
+if('href' in noddy && noddy.href.indexOf('http') !== -1 && (noddy.href.indexOf(document.location.host) !== -1 || remotes))
+{
+event.preventDefault();
+document.location.href = noddy.href;
+}
+
+},false);
+}
+</script>
+</head>
+
+<body>
+<script>
+     function hijack() {
+     $('#viewport a').click(function(e){
+          e.preventDefault();
+          loadPage(e.target.href);
+          })
+     }
+     
+function loadPage(url){
+   $('#viewport').load(url + '#viewport', hijack);
+}     
+    
+    
+</script>        
+    
+<% content %>
+
+<script src="<% request.uri_base %>/js/jquery.js"></script>
+<script src="<% request.uri_base %>/js/jquery.qrcode-0.7.0.js"></script>
+<script src="<% request.uri_base %>/js/foundation.min.js"></script>
+<script src="<% request.uri_base %>/js/foundation.clearing.js"></script>
+<script src="<% request.uri_base %>/js/idle-timer.min.js"></script>
+<script>$(document).foundation();</script>
+<script>
+       $('.qrCode').qrcode({
+	       render: 'image',
+	       width: 150,
+	       height: 150,
+	       fill: '#000000',
+	       background: null,
+	       text: 'http://fotobox.local/<% foto_filename %>'
+       });
+</script>
+<script>
+        (function ($) {
+            $( document ).on( "idle.idleTimer", function(event, elem, obj){
+		     location.href="/";
+            });            
+            $.idleTimer(300000);
+            
+        })(jQuery);
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<div class="row margin-60-top">
+      <div class="small-12 small-centered columns">
+        <center><h3>Es geht los in ....</h3></div>
+      </div>
+    </div>
+    
+    <div class="row margin-60-top">
+      <div class="small-12 small-centered columns">
+	<div style="width:100%; position:absolute; top:-100px;">
+	  <center><p class="timer timer-start">5</p></center>
+	</div>
+      </div>
+    </div>
+    
+    
+    
+
+<script>
+		    var timer = 4;	
+		    var interval = setInterval(function() {
+		    $('.timer').text(timer);
+		    if (timer === 1) {
+		     location.href="<% redirect_uri %>";
+		    } else {
+		     timer--;
+		    }
+		    }, 1000);
+</script>

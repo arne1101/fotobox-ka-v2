@@ -1,0 +1,63 @@
+
+ <div class="row margin-10-top">
+      <div class="small-12 columns">
+		<div class="small-7 columns">
+		<a href="<% request.uri_base %>/new?strip=0"><img src="<% request.uri_base %>/images/photo_start_1.png" class="h64 w64 margin-30-right"></a>
+		<a href="<% request.uri_base %>/new?strip=1"><img src="<% request.uri_base %>/images/photo_start_4.png" class="h64 w64 margin-30-right"></a>‚	
+		<a href="<% request.uri_base %>/gallery"><img src="<% request.uri_base %>/images/gallery_start.png" class="h64 w64 margin-30-right"></a>
+		</div>
+		<div class="small-5 columns" style="text-align:right;">
+		<a href="#" data-dropdown="dropQR"><img src="<% request.uri_base %>/images/wifi.png" class="h64 w64 margin-30-right"></a>
+		<!--<a href="<% request.uri_base %>/facebook/login/?foto=<% foto_filename %>"><img src="<% request.uri_base %>/images/fb.png" class="h64 w64 margin-30-right" ></a>-->
+		<!--<a href="<% request.uri_base %>/mail?foto=<% foto_filename %>"><img src="<% request.uri_base %>/images/mail.png" class="h64 w64 margin-30-right">-->
+		<!--<a href="<% request.uri_base %>/print?foto=<% foto_filename %>"><img src="<% request.uri_base %>/images/print.png" class="h64 w64 margin-30-right" ></a>-->
+		<a href="#" data-dropdown="dropHelp" data-options="align:top"><img src="<% request.uri_base %>/images/help.png"class="h64 w64"></a>
+		</div>
+      </div>
+    </div>
+    
+     <div id="dropQR" data-dropdown-content class="f-dropdown content medium">
+		 <p><b>Wifi-Share</b></p>
+		 <p>1. Verbinde dich mit dem Wifi Netzwerk <b>"Fotobox".</b></p>
+		 <p>2. QR-Code scannen und Foto herunterladen.</p>
+		 <div class="qrCode"></div>
+     </div>
+     <div id="dropHelp" data-dropdown-content class="f-dropdown content medium">
+		 <p><b>Hilfe</b></p>
+		 <p><img src="<% request.uri_base %>/images/photo_start_1.png" style="height:32px;">
+		    <br />Nimmt ein einzelnes Foto auf und zeigt dieses sofort an.
+		 </p>
+		 <p><img src="<% request.uri_base %>/images/photo_start_4.png" style="height:32px;">
+		    <br />Erstellt eine Collage aus 4 Fotos. Es werden nacheinander 4 Fotos aufgenommen
+		    und einzeln angezeigt. Am Ende werden alle 4 Fotos zu einer Collage zusammengef&uuml;gt.
+		 </p>
+		 <p><img src="<% request.uri_base %>/images/gallery.png" style="height:32px;">
+		    <br />Gallerie. Schaue dir alle Fotos an.
+		 </p>
+		 <p><img src="<% request.uri_base %>/images/wifi.png" style="height:32px;">
+		    <br />Wifi-Share. Lade das Foto auf dein Smartphone.
+		 </p>
+		 <p><img src="<% request.uri_base %>/images/fb.png" style="height:32px;">
+		    <br />Facebook-Share. Teile das Foto auf Faceook.<br />
+		    <small>Du musst dich mit deinem Facebook Account anmelden um das Foto zu teilen.
+		    <br />Facebook-Share funktioniert nur mit einer Internetverbindung.
+		    </small>
+		 </p>
+		  <p><img src="<% request.uri_base %>/images/mail.png" style="height:32px;">
+		    <br />Mail. Schicke dir das Foto per E-Mail zu.
+		 </p>
+     </div>
+    
+    <div class="row margin-10-top">
+	<div class="small-12 columns" id="swipeBox"
+	ontouchstart="touchStart(event,'swipeBox');"
+	ontouchend="touchEnd(event);" ontouchmove="touchMove(event);"
+	ontouchcancel="touchCancel(event);">
+		<p>
+		<img class="foto-strip" src="<% request.uri_base %>/gallery/<% foto_filename %>">
+		</p>
+	</div>
+    </div>
+
+
+

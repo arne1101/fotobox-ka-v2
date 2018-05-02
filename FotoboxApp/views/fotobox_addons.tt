@@ -1,0 +1,59 @@
+   <div class="row margin-10-top">
+      <div class="small-12 columns">
+      </div>
+    </div>
+    
+    <div class="row margin-30-top">
+      <div class="small-12 small-centered columns ">
+        
+      </div>
+    </div>
+    
+    <div class="row margin-30-top">
+      <div class="small-4 small columns">
+	    <center>
+	      <p><a href="random"><img src="<% request.uri_base %>/images/dia.png"></a></p>      
+	    </center>
+      </div>
+      <div class="small-4 small columns">
+	    <center>
+	      <p><a href="checkout"><img src="<% request.uri_base %>/images/prnt.png"></a></p>      
+	    </center>
+      </div>
+            <div class="small-4 small columns">
+	    <center>
+	      <p><a href="showroom"><img src="<% request.uri_base %>/images/last.png"></a></p>      
+	    </center>
+      </div>
+    </div>
+    
+     <div class="row margin-30-top">
+     <div class="small-12 small columns">
+	    <center>
+	      <p><a href="gallery"><img src="<% request.uri_base %>/images/gallery_start.png"></a></p>    
+	    </center>
+       </div>
+    </div>
+    
+    <div class="row">
+    <div class="small-12 small columns">
+    <div class="logo semi"></div>
+    </div>
+    </div>
+    
+    <div id="dropHelp" data-dropdown-content class="f-dropdown content medium">
+		 <p><b>Hilfe</b></p>
+		 <p><img src="<% request.uri_base %>/images/photo_start_1.png" style="height:32px;">
+		    <br />Nimmt ein einzelnes Foto auf und zeigt dieses sofort an.
+		 </p>
+		 <p><img src="<% request.uri_base %>/images/photo_start_4.png" style="height:32px;">
+		    <br />Erstellt eine Collage aus 4 Fotos. Es werden nacheinander 4 Fotos aufgenommen
+		    und einzeln angezeigt. Am Ende werden alle 4 Fotos zu einer Collage zusammengef&uuml;gt.
+		 </p>
+		 <p><img src="<% request.uri_base %>/images/gallery.png" style="height:32px;">
+		    <br />Gallerie. Schaue dir alle Fotos an.
+		 </p>
+     </div>
+    
+    
+

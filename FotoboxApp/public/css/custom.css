@@ -1,0 +1,169 @@
+body {
+ /* background: url("../img/parkett.jpg") no-repeat; */
+ background: linear-gradient(180deg, #fefaf5 0%, #ded1c4 100%) repeat-x;
+ background-color: #ded1c4;
+ background-size: 1024px 768px ;
+}
+    
+  
+.semi {
+   opacity: 0.6;
+   filter:Alpha(Opacity=60);
+}
+
+.no-semi {
+   opacity: 1.0;
+   filter:Alpha(Opacity=100);
+}
+
+.footer{
+    bottom:0;
+    width:100%;
+}
+ 
+.timer-start {
+   font-size: 512px;
+}
+
+.red {
+   color: #e6212b;
+}
+
+.light-red {
+   color: #e67075;
+}
+
+.h64 {
+   height: 64px;
+}
+.w64 {
+   width: 64px;
+}
+ 
+.foto-strip {
+   height: auto;
+}
+.foto-strip-small{
+   width: 512px;
+}
+
+.margin-10-top{
+   margin-top: 10px;
+}
+
+.margin-30-top {
+   margin-top: 30px;
+}
+
+.margin-60-top {
+   margin-top: 60px;
+}
+
+.margin-30-right {
+   margin-right: 30px;
+}
+
+
+.height-32{
+   height: 32px;
+}
+
+.border-bottom-dotted {
+   border-bottom: dotted #000;
+}
+
+.border-top-dotted {
+   border-top: dotted #000;
+}
+
+.gallery-thumb {
+   width: 256px;
+   
+}
+
+.clearing-main-prev, .clearing-main-next {
+    position: absolute;
+    height: 450px;
+    width: 40px;
+    top: 80px;
+}
+
+.fb-login-button {
+   position: relative; top: 5px;
+   text-align: center;
+}
+
+.logo {
+   background: url(../images/logo.png) no-repeat;
+   background-position: center;
+   height: 200px;
+   
+}
+
+.logo-kl {
+   background: url(../images/logo-kl.png) no-repeat;
+   background-position: center;
+   height: 100px; 
+}
+
+.logo-www {
+   background: url(../images/logo-www.png) no-repeat;
+   background-position: center;
+   height: 100px; 
+}
+
+.branding {
+   background: url(../branding/logo.png) no-repeat;
+   background-position: center;
+   height: 200px;
+   
+}
+
+.edition {
+   background: url(../images/logo_edition.png) no-repeat;
+   background-position: center;
+   height: 200px;
+   
+}
+
+.www_logo {
+   background: url(../images/www_logo.png) no-repeat;
+   background-position: top;
+   height: 110px;  
+}
+
+.www_logo2 {
+   background: url(../images/www_logo2.png) no-repeat;
+   background-position: top;
+   height: 110px;  
+}
+
+.galleryWide {
+   height: 650px;
+   overflow: auto;
+   scrollbar-base-color:#ded1c4
+}
+
+figcaption {
+   display: block;
+   text-align: center;
+   font-size: 20px;
+}
+
+.random {
+   max-width: 80%;
+}
+
+.druckinfo
+{
+   background: url(../images/druckinfo.png) no-repeat;
+   background-position: top;
+   height: 768px;
+   position: absolute;
+   top: 0px;
+   bottom: 0px;
+   left: 0px;
+   right: 0px;
+}
+
+

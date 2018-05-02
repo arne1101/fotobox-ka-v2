@@ -1,0 +1,29 @@
+<div class="row">
+  <div class="12 columns">
+   <!--<div class="logo-kl"></div>-->
+  </div>
+</div>
+<div class="row margin-10-top">
+<div>
+ <p>
+  <center>
+   <img src="<% request.uri_base %>/gallery/thumbs/<% foto_filename %>">
+  </center>
+</p>
+</div>
+<div class="row">
+  <div class="12 columns">
+   <!--<div class="logo-www"></div>-->
+  </div>
+</div>
+
+<script>
+ var timer = 10;	
+ var interval = setInterval(function() {
+ if (timer === 0) {
+ location.href="<% request.uri_base %>/random";
+ } else {
+ timer--;
+ }
+ }, 1000);
+</script>

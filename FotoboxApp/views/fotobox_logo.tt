@@ -1,0 +1,55 @@
+   <div class="row margin-10-top">
+      <div class="small-12 columns">
+		<p></p>
+       </div>
+    </div>
+    
+    <div class="row margin-30-top">
+      <div class="small-12 small-centered columns">
+        <center><h3><b>Bitte W&auml;hlen...</b></h3></center>
+      </div>
+    </div>
+    
+   <div class="row margin-30-top">
+      <div class="small-4 small columns">
+	    <center>
+	      <p><a href="setLogo?logo=CBS"><img src="<% request.uri_base %>/branding/CBS.png"></a></p>      
+	    </center>
+      </div>
+   <div class="small-4 small columns">
+	    <center>
+	      <p><a href="setLogo?logo=HIRST"><img src="<% request.uri_base %>/branding/HIRST.png"></a></p>   
+	    </center>
+      </div>
+	   <div class="small-4 small columns">
+	    <center>
+	      <p><a href="setLogo?logo=HFA"><img src="<% request.uri_base %>/branding/HFA.png"></a></p>   
+	    </center>
+      </div>
+      <div class="small-4 small columns"><p></p></div>
+    </div>
+     
+    </div>
+	
+    <div class="row margin-30-top">
+	  <div class="small-6 small columns">
+	    <center>
+	      <p><a href="setLogo?logo=HS"><img src="<% request.uri_base %>/branding/HS.png"></a></p>   
+	    </center>
+      </div>
+	   <div class="small-6 small columns">
+	    <center>
+	      <p><a href="setLogo?logo=KSOP"><img src="<% request.uri_base %>/branding/KSOP.png"></a></p>   
+	    </center>
+      </div> 
+    </div>
+    
+    <div class="row margin-30-top">
+	 <div class="small-4 small columns"></div>
+     <div class="small-4 small-centered columns">
+	    <center>
+	      <p><a href="setLogo?logo=leer"><img src="<% request.uri_base %>/branding/AO.png"></a></p>   
+	    </center>
+      </div>
+	  <div class="small-4 small columns"></div>
+   </div>

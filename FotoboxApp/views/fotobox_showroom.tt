@@ -1,0 +1,32 @@
+<div class="row">
+  <div class="12 columns">
+   <div class="logo-kl"></div>
+  </div>
+</div>
+<div class="row margin-10-top">
+   <div class="12 columns">
+      <% header %>
+   </div>
+</div>
+
+
+<div>
+   <% gallery %>
+ </div>
+ 
+ <div class="row">
+  <div class="12 columns">
+   <div class="logo-www"></div>
+  </div>
+</div>
+ 
+ <script>
+  var timer = <% timer %>;	
+  var interval = setInterval(function() {
+  if (timer === 0) {
+   location.href="<% request.uri_base %>/<% redirect %>";
+  } else {
+   timer--;
+  }
+  }, 1000);
+</script>

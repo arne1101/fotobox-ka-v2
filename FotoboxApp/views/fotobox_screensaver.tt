@@ -1,0 +1,19 @@
+ 
+    
+    <div class="row margin-60-top">
+    <div class="small-12 small columns">
+    <p>
+    <a href="<% request.uri_base %>"><img src="<% request.uri_base %>/images/logo.png"></a>
+    </p>
+    </div>
+    </div>
+    
+    <div class="row margin-60-top">
+    <div class="small-12 small columns">
+    <div class="www_logo"></div>
+    </div>
+    </div>
+    
+
+    
+    

@@ -1,0 +1,148 @@
+<script>
+  // This is called with the results from from FB.getLoginStatus().
+  function statusChangeCallback(response) {
+    
+    // The response object is returned with a status field that lets the
+    // app know the current login status of the person.
+    // Full docs on the response object can be found in the documentation
+    // for FB.getLoginStatus().
+    if (response.status === 'connected') {
+      // Logged into your app and Facebook.
+      document.getElementById('status').innerHTML = '<a href="#" id="click" class="button alert" onclick="upload()">Upload</a>';
+    } else if (response.status === 'not_authorized') {
+      // The person is logged into Facebook, but not your app.
+      document.getElementById('status').innerHTML = 'Bitte melde dich an, um die Uploadfunktion nutzen zu k&ouml;nnen.';
+    } else {
+      // The person is not logged into Facebook, so we're not sure if
+      // they are logged into this app or not.
+      document.getElementById('status').innerHTML = 'Bitte melde dich an, um die Uploadfunktion nutzen zu k&ouml;nnen.';
+    }
+  }
+
+  // This function is called when someone finishes with the Login
+  // Button.  See the onlogin handler attached to it in the sample
+  // code below.
+  function checkLoginState() {
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+      location.reload();
+    });
+  }
+
+  window.fbAsyncInit = function() {
+  FB.init({
+    appId      : '783146625053057',
+    cookie     : true,  // enable cookies to allow the server to access 
+                        // the session
+    xfbml      : true,  // parse social plugins on this page
+    version    : 'v2.0' // use version 2.0
+  });
+
+  // Now that we've initialized the JavaScript SDK, we call 
+  // FB.getLoginStatus().  This function gets the state of the
+  // person visiting this page and can return one of three states to
+  // the callback you provide.  They can be:
+  //
+  // 1. Logged into your app ('connected')
+  // 2. Logged into Facebook, but not your app ('not_authorized')
+  // 3. Not logged into Facebook and can't tell if they are logged into
+  //    your app or not.
+  //
+  // These three cases are handled in the callback function.
+
+  FB.getLoginStatus(function(response) {
+    statusChangeCallback(response);
+  });
+  };
+  
+     
+
+  // Load the SDK asynchronously
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+  // Here we run a very simple test of the Graph API after login is
+  // successful.  See statusChangeCallback() for when this call is made.
+
+function test(){
+  FB.api('/me/feed', 'post', {message: 'Hello, world!'});
+};
+
+function upload() {
+ FB.api(
+    "/me/photos",
+    "POST",
+    {
+        "object": {
+            "url": "https://farm3.staticflickr.com/2938/14667500326_33038b37ae_o_d.jpg"
+        }
+    },
+    function (response) {
+      if (response && !response.error) {
+        document.getElementById('status').innerHTML = 'Foto erfolgreich hochgeladen.';
+      } else {
+	 document.getElementById('status').innerHTML = alert(JSON.stringify(response));
+      }
+    }
+);
+
+};
+
+
+</script>
+
+   
+   <div class="row margin-10-top">
+      <div class="small-12 columns">
+		<div class="small-6 columns">
+		<a href="<% request.uri_base %>/new?strip=0"><img src="<% request.uri_base %>/images/photo_start_1.png" class="h64 w64 margin-30-right"></a>
+		<a href="<% request.uri_base %>/new?strip=1"><img src="<% request.uri_base %>/images/photo_start_4.png" class="h64 w64 margin-30-right"></a>
+		<a href="/single?foto=<% foto_filename %>"><img src="<% request.uri_base %>/images/arrow_left.png" class="h64 w64 margin-30-right"></a>
+		</div>
+		<div class="small-6 columns" style="text-align:right;">
+		<a href="#" data-dropdown="dropHelp" data-options="align:top"><img src="<% request.uri_base %>/images/help.png"class="h64 w64"></a>
+		</div></div>
+    </div>
+
+     <div class="row margin-10-top">
+	<div class="small-12 columns status">
+		<h3><b><% message %></b></h3>
+	</div>
+    </div>
+
+    <div class="row margin-10-top">
+	<div class="small-6 columns">
+	   <p>Hier kannst du das Foto auf Facebook hochladen und in deinem Profil teilen.</p><br />
+	   <div id="status">
+	   <br />
+	   </div>
+	    <div class="fb-login-button" data-scope="publish_actions" data-max-rows="1" data-size="xlarge" data-show-faces="false" data-auto-logout-link="true"></div>
+	   
+	</div>
+	<div class="small-6 columns">
+		<img class="foto-strip-small" src="<% request.uri_base %>/gallery/<% foto_filename %>">
+	</div>
+    </div>
+    
+    <div id="dropHelp" data-dropdown-content class="f-dropdown content medium">
+		 <p><b>Hilfe</b></p>
+		  <p><img src="<% request.uri_base %>/images/photo_start_1.png" style="height:32px;">
+		    <br />Nimmt ein einzelnes Foto auf und zeigt dieses sofort an.
+		 </p>
+		 <p><img src="<% request.uri_base %>/images/photo_start_4.png" style="height:32px;">
+		    <br />Erstellt eine Collage aus 4 Fotos. Es werden nacheinander 4 Fotos aufgenommen
+		    und einzeln angezeigt. Am Ende werden alle 4 Fotos zu einer Collage zusammengef&uuml;gt.
+		 </p>
+		 <p><img src="<% request.uri_base %>/images/arrow_left.png" style="height:32px;">
+		    <br />Zur&uuml;ck zum Bild.
+		 </p>
+     </div>
+    
+
+
+

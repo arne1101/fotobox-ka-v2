@@ -1,0 +1,32 @@
+    <div class="row margin-10-top height-32">
+    <div class="small-12 columns">
+     <center><img src="<% request.uri_base %>/images/<% number %>.png"> </center>
+    </div>
+    </div>
+    
+    <div class="row margin-10-top">
+	<div class="small-12 columns">
+		<p>
+		<img src="<% request.uri_base %>/gallery/<% foto_filename %>">
+		
+		</p>
+	</div>
+    </div>
+    <div style="width:100%; position:absolute; top:1%;"><center><p class="timer timer-start red semi"></p></center></div>
+
+<script>
+     var timer = <% timer %>;
+     if(timer>0) {timer--;}
+     var interval = setInterval(function() {
+     if (timer > 3) {}
+     else {
+      $('.timer').text(timer);
+      }
+     if (timer == 0) {
+      $('.timer').text("");
+      location.href="<% redirect_uri %>";
+     } else {
+      timer--;
+     }
+     }, 1000);
+</script>
