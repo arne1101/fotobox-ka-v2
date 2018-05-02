@@ -1,0 +1,30 @@
+- sudo modprobe ipv6
+
+- sudo mkdir /etc/citadel
+- sudo mkdir /etc/citadel/netconfigs
+- sudo mkdir /etc/citadel/netconfigs/7
+
+- sudo apt-get update
+- sudo apt-get install citadel-suite
+
+Alle Einstellungen default, außer:
+Ports: 8080 und 4433
+
+Installatonsprogramm funktioniert nicht richtig, daher manuelle Konfig noch einmal notwendig:
+
+- sudo /usr/lib/citadel-server/setup
+- sudo dpkg-reconfigure citadel-webcit 
+
+Dienst steuern:
+sudo /etc/init.d/citadel 
+
+Absender einstellen:
+Go to Administration
+Navigate to Edit site-wide configuration
+Proceed to the Network section and
+Uncheck Correct forged From: lines during authenticated SMTP
+
+Postausgangsserver Konfigurieren:
+Administration -> Domain Names -> Smat Hosts
+
+info@fotobox-ka.de:___PW___HERE___@mail.fotobox-ka.de
