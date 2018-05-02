@@ -203,8 +203,8 @@ sub sendMail {
 				port => '25',
                 from => 'info@fotobox-ka.de',
                 auth => 'LOGIN',
-                authid => 'fotobox-ka',
-                authpwd => 'f0t0b0xk4',
+                authid => '...',
+                authpwd => '...',
                 on_errors => 'die',
         }  or die "Can't create the Mail::Sender object: $Mail::Sender::Error\n";
 	
