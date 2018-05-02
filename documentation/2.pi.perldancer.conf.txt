@@ -9,13 +9,10 @@ sudo apt-get install libdancer-perl libfile-slurp-perl libjson-perl liblog-log4p
 
 ######
 
-
-#sudo cpan Facebook::Graph
 sudo cpan List::MoreUtils
 sudo cpan Mail::Sender
 sudo cpan Config::Simple
 sudo cpan Email::Stuffer
-
 
 ###### Starman as Dancer Server
 
