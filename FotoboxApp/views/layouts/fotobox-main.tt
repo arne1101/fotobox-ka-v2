@@ -75,7 +75,7 @@ function loadPage(url){
             $( document ).on( "idle.idleTimer", function(event, elem, obj){
 		     location.href="/";
             });            
-            $.idleTimer(300000);
+            $.idleTimer(10000);
             
         })(jQuery);
 </script>
