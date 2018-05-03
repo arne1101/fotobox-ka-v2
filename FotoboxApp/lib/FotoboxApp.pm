@@ -12,10 +12,6 @@ our $VERSION = '1.0';
 # 0 = Branding disabled
 my $OptionBranding = 0;
 
-# Enable Pay for Print Option
-# 1 = Pay for Print enabled
-# 0 = Pay for Print disabled
-my $OptionPayForPrint = 1;
 
 my $fotobox = Fotobox->new();
 my @fotos;
@@ -534,134 +530,8 @@ get '/mail/send/' => sub {
     };
 };
 
-# Facebook Authentication und Upload
-# 
 
-#get '/facebook/login/' => sub {
-#    $upload  = params->{foto};
-#    my $p = Net::Ping->new();
-#    if ($p->ping("www.fotobox-ka.de")) {
-#       
-#    } else {
-#        redirect '/facebook/offline/';
-#    }
-#    $p->close();
-#    
-#   # my $code = 'document.getElementById(\'status\').innerHTML =\'<p><b>Danke, \' + response.name + \'!</b><br /> Du kannst das Foto jetzt auf Facebook teilen.</p><br /><br /><a href="/facebook/upload/?foto='.$upload.'" class="button alert">Foto jetzt Hochladen.</a>\'';
-#   
-#
-#    set 'layout' => 'fotobox-main';
-#    template 'fotobox_facebook',
-#    {
-#        'message' => 'Facebook Share',
-#        'text' => 'Du musst dich bei Facebook anmelden, um das Foto hochladen zu k&ouml;nnen.',
-#        'foto_filename' => $upload #,
-#       # 'code' => $code
-#    };
-#    
-#};
-#
-#get '/facebook/upload/' => sub {
-#    $upload  = params->{foto};
-#    my $p = Net::Ping->new();
-#    if ($p->ping("www.fotobox-ka.de")) {
-#       
-#    } else {
-#        redirect '/facebook/offline/';
-#    }
-#    $p->close();
-#    
-#    
-#    my $code = 'publishFacebook();';
-#  
-#    set 'layout' => 'fotobox-main';
-#    template 'fotobox_facebook',
-#    {
-#        'message' => 'Facebook Share',
-#        'text' => 'Du musst dich bei Facebook anmelden, um das Foto hochladen zu k&ouml;nnen.',
-#        'foto_filename' => $upload,
-#        'code' => $code
-#    };
-#    
-#};
-#
-#get '/facebook/loginbackup/' => sub {
-#    $upload  = params->{foto};
-#    my $p = Net::Ping->new();
-#    if ($p->ping("www.fotobox-ka.de")) {
-#        my $fb = Facebook::Graph->new( config->{facebook} );
-#        redirect $fb->authorize
-#        ->extend_permissions(qw(email publish_actions))
-#        ->set_display('popup')
-#        ->uri_as_string;
-#    } else {
-#        redirect '/facebook/offline/';
-#    }
-#    $p->close();
-#    
-#};
-#
-#get '/facebook/postback/' => sub {
-#    my $authorization_code = params->{code};
-#    my $fb                 = Facebook::Graph->new( config->{facebook} );
-#
-#    $fb->request_access_token($authorization_code);
-#    session access_token => $fb->access_token;
-#    redirect '/facebook/upload/';
-#};
-#
-#get '/facebook/uploadx/' => sub {
-#    my $fb = Facebook::Graph->new( config->{facebook} );
-#
-#    $fb->access_token(session->{access_token});
-#
-#    my $response = $fb->query->find('me')->request;
-#    my $user     = $response->as_hashref;
-#    set 'layout' => 'fotobox-main';
-#    template 'fotobox_facebook',
-#    {
-#        'message' => 'Hallo '.$user->{name}.'.',
-#        'text' => 'Du kannst das Foto jetzt auf Facebook teilen.',
-#        'foto_filename' => $upload,
-#        'action' => '<center><p><a class="button [radius round]"href="done/">Upload</a></p> </center>'
-#    };
-#};
 
-get '/facebook/offline/' => sub {
-    set 'layout' => 'fotobox-main';
-    template 'fotobox_mail',
-    {
-        'message' => 'Sorry. Facebook Upload steht nicht zur Verf&uuml;gung.',
-         'text' => 'Es besteht keine Verbindung zum Internet.',
-        'foto_filename' => $upload,
-        #'action' => '<center><p><a class="button [radius round]"href="/">Zur&uuml;ck zum Start</a></p> </center>'
-    
-    };
-};
-
-#get '/facebook/upload/done/' => sub {
-#    my $fb = Facebook::Graph->new( config->{facebook} );
-#
-#    $fb->access_token(session->{access_token});
-#    my $response = $fb->query->find('me')->request;
-#    my $user     = $response->as_hashref;
-#    my $return = $fb->add_photo()
-#    ->set_source($fotobox->getPhotoPath.$upload)
-#    ->set_message('www.fotobox-ka.de')
-#    ->publish
-#    ->as_string();
-#    
-#    session->destroy;
-#    
-#    set 'layout' => 'fotobox-main';
-#    template 'fotobox_facebook',
-#    {
-#        'message' => 'Fertig. Du hast das Foto auf Facebook geteilt.',
-#        'text' => 'Zeit f&uuml;r das n&auml;chste Foto.',
-#        'foto_filename' => $upload,
-#        'action' => '<center><p>'.$return.'</p> </center>'
-#    };
-#};
 
 get '/print' => sub {
     undef $print;
@@ -671,12 +541,7 @@ get '/print' => sub {
     my $message = 'Willst du das Foto wirklich drucken?';
     my $text = 'Klicke auf den Drucker um das Foto auszudrucken.';
     my $code = '<a href="print/confirm?foto='.$print.'"><img src="images/print.png" class="h64 w64 margin-30-right" ></a>';
-    
-   # if ($OptionPayForPrint == 1) {
-   #     $message = 'Willst du das Foto kaufen?';
-   #     $text = 'Melde dich mit der Fotonummer an der Kasse.';
-   #     $code = '<p style="font-size:128px;">'.$&.'</p>';
-   # } 
+
 
     set 'layout' => 'fotobox-main';
     template 'fotobox_print',
@@ -696,25 +561,17 @@ get '/print/confirm' => sub {
     my $printer = 'fotoboxdrucker';
 
     my $rc;
-    
-    if ($OptionPayForPrint == 1) {
-        #$template = 'fotobox_checkout';
-        #$printer = 'Canon_Canon_CP910_ipp';
-        $rc = $fotobox->copyToPrinter($print);
-    } else {
-        $rc = $fotobox->printPhoto($print, $printer);
-    }
+
+    $rc = $fotobox->printPhoto($print, $printer);
       
-     set 'layout' => 'fotobox-main';
-     template $template,
-     {
+    set 'layout' => 'fotobox-main';
+    template $template,
+    {
          'message' => 'Dein Foto wird ausgedruckt',
          'text' => '',
          'foto_filename' => $print,
          'code' => ''
-     }; 
-    
-    
+    }; 
 };
 
 # Showroom für die zuletzt gemachten Fotos zum Verkauf
