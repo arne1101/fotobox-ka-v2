@@ -78,9 +78,7 @@ sub takePicture {
                 # Save photo to an external Deive
                 # This might slow down the time from capture to viewing the picture, maybe I should make this async
                 # Copy photo to external Drive
-                my $cmd = "sudo cp $photoPath.$filename $externalDrive.$filename";
-                # run command
-                my $rc = system($cmd);  
+                copyToExternalDrive("Fotobox", $filename);
                 
                 
 				### ERGEBNIS WIRD HIER NICHT GEFRUEFT
@@ -155,8 +153,12 @@ sub brandingPhoto {
 	my $rc3 = createThumbnail("Fotobox", 'branding_'.$foto);
 	
 	if ($rc1 eq 0 && $rc2 eq 0 && $rc3 eq 0) {
-		# Keine Fehler: Foto zurueck geben
-		return 'branding_'.$foto;
+		# If not error
+        # Copy photot to exteral drive
+        #maybe this works...
+        copyToExternalDrive("Fotobox", 'branding_'.$foto);
+        # return branded photo
+        return 'branding_'.$foto;    
 	} else {
 		#Fehler zurueck geben
 		return "no-photo-error.png";
@@ -182,14 +184,31 @@ sub createFotoStrip {
 	$rc = system($cmd);
 	
 	if ($rc eq 0) {
+        # if not error
+        # create thumbail 
 		createThumbnail("Fotobox", $fotoStrip);
-		return $fotoStrip;
+        # copy the strip to external drive
+        copyToExternalDrive("Fotobox", $fotoStrip);
+		# return strip
+        return $fotoStrip;
 	} else {
+        # if error, return error
 		return "general-error.png";
 	}
 	
 	
 }
+
+sub copyToExternalDrive {
+    my $Objekt = shift;
+    my $file = shift;
+    
+    # command to copy the given file to the external Drive
+    my $cmd = "sudo cp $photoPath.$file $externalDrive.$file";
+    # run command
+    my $rc = system($cmd);     
+}
+
 
 sub sendMail {
 	my $Objekt = shift;
