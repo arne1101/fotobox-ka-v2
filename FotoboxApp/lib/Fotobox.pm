@@ -1,12 +1,6 @@
 #!/usr/bin/perl
 
-#########################################
-# Fotobox fotobox.pm                    #
-# Author: Arne Allisat                  #
-# Moduldatei Fotobox	                #
-# Version: 1.2                          #
-# Date: 01.08.2015                      #
-#########################################
+# Module file fotobox-ka-v2
 
 package Fotobox;
 use Mail::Sender;
@@ -19,9 +13,9 @@ use Mail::Sender;
 my $appPath = '/var/www/FotoboxApp/';
 my $photoPath = '/var/www/FotoboxApp/public/gallery/';
 my $thumbnailPath = $photoPath.'thumbs/';
+my $externalDrive = '/media/usb/';
 my $tempPath = '/var/tmp/';
 my $brandingDir = '/var/www/FotoboxApp/public/branding/';
-my $fbAppID = '783146625053057';
 
 sub new {
 	my $Objekt = shift;
@@ -81,6 +75,14 @@ sub takePicture {
 				# Thumbnail erstellen wenn Foto erfolgreich aufgenommen wurde
 				$thumbExec = createThumbnail("Fotobox", $filename);
 				
+                # Save photo to an external Deive
+                # This might slow down the time from capture to viewing the picture, maybe I should make this async
+                # Copy photo to external Drive
+                my $cmd = "sudo cp $photoPath.$filename $externalDrive.$filename";
+                # run command
+                my $rc = system($cmd);  
+                
+                
 				### ERGEBNIS WIRD HIER NICHT GEFRUEFT
 			}
 

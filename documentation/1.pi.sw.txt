@@ -1,25 +1,39 @@
 Pi software installieren
 
-	1. Apple Bonjour
+	0. Make sure everything is up to date
+    
+        sudo apt-get update
+        sudo apt-get upgrade
+    
+    1. AVAHI / ZERO-CONF (fuer .local)
+    
+		apt-get install avahi-daemon avahi-discover libnss-mdns
 
-	   sudo apt-get install libnss-mdns
     
 	2. gphoto2
 	
-		sudo apt-get install gphoto2
-
 		
+        the packaged gphoto2 version is ofent not up to date. this may lead to problems with certain cameras.
+        If you're lucky, installaing gphoto2 vie apt-get will just work fine.
+        
+        sudo apt-get install gphoto2
+
+		If you want to make sure to have the newest version, you go this way:
+        
         http://www.geekingabout.com/controlling-a-nikon-d5200-with-raspberry-pi-and-gphoto2-2-5-2.html
 
 		Install dependencies
 		
 		apt-get install -y libltdl-dev libusb-dev libexif-dev libpopt-dev
-		Create a temp folder to work in
+		
+        Create a temp folder to work in
 		mkdir gphoto2-temp-folder
 		cd gphoto2-temp-folder
 		
 		Download, compile and install libusb
 		
+        point out newest version at http://ftp.de.debian.org/debian/pool/main/libu/libusbx
+        
 		wget http://ftp.de.debian.org/debian/pool/main/libu/libusbx/libusbx_1.0.11.orig.tar.bz2
 		tar xjvf libusbx_1.0.17.orig.tar.bz2
 		cd libusbx-1.0.11/
@@ -28,21 +42,25 @@ Pi software installieren
 		sudo make install
 		cd ..
 
-		a) Download, compile and install libgphoto2 2.5.5.1
+		a) Download, compile and install libgphoto2 
 		
-		wget http://sourceforge.net/projects/gphoto/files/libgphoto/2.5.5.1/libgphoto2-2.5.5.1.tar.bz2
-		tar xjf libgphoto2-2.5.5.1.tar.bz2
-		cd libgphoto2-2.5.5.1
+        point out newest version on https://sourceforge.net/projects/gphoto/files/libgphoto
+        
+		wget https://sourceforge.net/projects/gphoto/files/libgphoto/2.5.17/libgphoto2-2.5.17.tar.bz2
+		tar xjf libgphoto2-2.5.17.tar.bz2
+		cd libgphoto2-2.5.17
 		sudo ./configure
 		sudo make
 		sudo make install
 		cd ..
 		
-		b) Download, compile and install gphoto2 2.5.5
+		b) Download, compile and install gphoto2 
 
-		wget http://downloads.sourceforge.net/project/gphoto/gphoto/2.5.5/			gphoto2-2.5.5.tar.gz
-		tar xzvf gphoto2-2.5.5.tar.gz
-		cd gphoto2-2.5.5
+        point out newest version on https://sourceforge.net/projects/gphoto/files/gphoto
+
+		wget https://sourceforge.net/projects/gphoto/files/gphoto/2.5.17/gphoto2-2.5.17.tar.bz2
+		tar xzvf gphoto2-2.5.17.tar.gz
+		cd gphoto2-2.5.17
 		sudo ./configure
 		sudo make
 		sudo make install
@@ -53,8 +71,8 @@ Pi software installieren
 	3. apache2 http server
 	
 		sudo apt-get install apache2
-		sudo apt-get install libapache2-mod-perl2
-		sudo apt-get install libapache2-mod-php5 php5 php-pear php5-xcache
+		#sudo apt-get install libapache2-mod-perl2
+		#sudo apt-get install libapache2-mod-php5 php5 php-pear php5-xcache
 		
 		
 	4. ftp server installieren
@@ -77,24 +95,17 @@ Pi software installieren
 	5. epeg zum schnellen jpg verkleinern
 	
 		a)
-		Check for newest version http://www.ijg.org/files/
-
-		curl -O http://www.ijg.org/files/jpegsrc.v8c.tar.gz
-		tar zxvf jpegsrc.v8c.tar.gz
-		cd jpeg-8c/
+		Check for newest version of JPEG from the Independent JPEG Group on http://www.ijg.org
+		
+        wget http://www.ijg.org/files/jpegsrc.v9c.tar.gz
+		tar zxvf jpegsrc.v9c.tar.gz
+		cd jpeg-9c/
 		sudo ./configure
 		sudo make
 		sudo make install
 		
 		b)
-		download epeg from https://github.com/mattes/epeg
-		
-		extract and copy files to pi
-
-		wget https://github.com/mattes/epeg/archive/master.zip
-		unzip master.zip
-
-		or
+		download epeg from https://github.com/mattes/epeg or from my untouched fork https://github.com/arne1101/epeg/		
 
 		wget https://github.com/mattes/epeg/archive/v0.9.1.042.tar.gz 
 		tar xvf v0.9.1.042.tar.gz
@@ -125,8 +136,9 @@ Pi software installieren
 		sudo nano /etc/usbmount/usbmount.conf
 
 		FS_MOUNTOPTIONS="-fstype=vfat,gid=users,dmask=0007,fmask=0117"
-
-	8. AVAHI / ZERO-CONF (fuer .local)
-		apt-get install avahi-daemon avahi-discover libnss-mdns
-
+        
+        
+    8. Reboot
+    
+        sudo shutdown -r now
 	
