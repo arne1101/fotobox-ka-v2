@@ -11,7 +11,8 @@ use Mail::Sender;
 #my $photoPath = "/Users/arne/Sites/Fotobox/www/FotoboxApp/public/gallery/";
 # Pi
 my $appPath = '/var/www/FotoboxApp/';
-my $photoPath = '/var/www/FotoboxApp/public/gallery/';
+#my $photoPath = '/var/www/FotoboxApp/public/gallery/';
+my $photoPath = '/home/pi/git/fotobox-ka-v2/FotoboxApp/public/gallery/';
 my $thumbnailPath = $photoPath.'thumbs/';
 my $externalDrive = '/media/usb/';
 my $tempPath = '/var/tmp/';
