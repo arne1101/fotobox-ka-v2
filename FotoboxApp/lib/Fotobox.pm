@@ -75,13 +75,11 @@ sub takePicture {
 				# Thumbnail erstellen wenn Foto erfolgreich aufgenommen wurde
 				$thumbExec = createThumbnail("Fotobox", $filename);
 				
-               		 # Save photo to an external Deive
-               		 # This might slow down the time from capture to viewing the picture, maybe I should make this async
-               		 # Copy photo to external Drive
-               		 # copyToExternalDrive("Fotobox", $filename);
-                
-                
-			### ERGEBNIS WIRD HIER NICHT GEFRUEFT
+               			# Save photo to an external Deive
+               			# This might slow down the time from capture to viewing the picture, maybe I should make this async
+               			# Copy photo to external Drive
+               			copyToExternalDrive("Fotobox", $filename);
+				### ERGEBNIS WIRD HIER NICHT GEFRUEFT
 			}
 
 		
@@ -97,9 +95,9 @@ sub takePicture {
 
 sub createThumbnail {
 	
-		# Thumbnailbild erstellen
+	# Thumbnailbild erstellen
 	
-		my $Objekt = shift;
+	my $Objekt = shift;
         my $filename = shift;
         
         my $result = 1;
@@ -155,8 +153,8 @@ sub brandingPhoto {
 	if ($rc1 eq 0 && $rc2 eq 0 && $rc3 eq 0) {
 		# If not error
         # Copy photot to exteral drive
-        #maybe this works...
-        # copyToExternalDrive("Fotobox", 'branding_'.$foto);
+        # maybe this works...
+        copyToExternalDrive("Fotobox", 'branding_'.$foto);
         # return branded photo
         return 'branding_'.$foto;    
 	} else {
@@ -184,13 +182,13 @@ sub createFotoStrip {
 	$rc = system($cmd);
 	
 	if ($rc eq 0) {
-        # if not error
-        # create thumbail 
+        	# if not error
+        	# create thumbail 
 		createThumbnail("Fotobox", $fotoStrip);
-        # copy the strip to external drive
-        # copyToExternalDrive("Fotobox", $fotoStrip);
+	        # copy the strip to external drive
+	        copyToExternalDrive("Fotobox", $fotoStrip);
 		# return strip
-        return $fotoStrip;
+        	return $fotoStrip;
 	} else {
         # if error, return error
 		return "general-error.png";
