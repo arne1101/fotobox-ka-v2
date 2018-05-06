@@ -75,13 +75,13 @@ sub takePicture {
 				# Thumbnail erstellen wenn Foto erfolgreich aufgenommen wurde
 				$thumbExec = createThumbnail("Fotobox", $filename);
 				
-                # Save photo to an external Deive
-                # This might slow down the time from capture to viewing the picture, maybe I should make this async
-                # Copy photo to external Drive
-                copyToExternalDrive("Fotobox", $filename);
+               		 # Save photo to an external Deive
+               		 # This might slow down the time from capture to viewing the picture, maybe I should make this async
+               		 # Copy photo to external Drive
+               		 # copyToExternalDrive("Fotobox", $filename);
                 
                 
-				### ERGEBNIS WIRD HIER NICHT GEFRUEFT
+			### ERGEBNIS WIRD HIER NICHT GEFRUEFT
 			}
 
 		
@@ -156,7 +156,7 @@ sub brandingPhoto {
 		# If not error
         # Copy photot to exteral drive
         #maybe this works...
-        copyToExternalDrive("Fotobox", 'branding_'.$foto);
+        # copyToExternalDrive("Fotobox", 'branding_'.$foto);
         # return branded photo
         return 'branding_'.$foto;    
 	} else {
@@ -188,7 +188,7 @@ sub createFotoStrip {
         # create thumbail 
 		createThumbnail("Fotobox", $fotoStrip);
         # copy the strip to external drive
-        copyToExternalDrive("Fotobox", $fotoStrip);
+        # copyToExternalDrive("Fotobox", $fotoStrip);
 		# return strip
         return $fotoStrip;
 	} else {
