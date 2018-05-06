@@ -1,22 +1,15 @@
-PerlDancer installieren
+Perl Dancer2 installieren
 
-sudo aptitude install libdancer-perl libfile-slurp-perl libjson-perl liblog-log4perl-perl libtemplate-perl
+curl -L http://cpanmin.us | perl - --sudo Dancer2
 
 
-or
-
-sudo apt-get install libdancer-perl libfile-slurp-perl libjson-perl liblog-log4perl-perl libtemplate-perl
-
-######
+Needed Perl Modules 
 
 sudo cpan List::MoreUtils
 sudo cpan Mail::Sender
 sudo cpan Config::Simple
-sudo cpan Email::Stuffer
 
-###### Starman as Dancer Server
 
-sudo cpan Starman
 
 
 

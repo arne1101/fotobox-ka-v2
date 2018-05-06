@@ -1,5 +1,5 @@
 package FotoboxApp;
-use Dancer ':syntax';
+use Dancer2 ':syntax';
 use Fotobox;
 #use Facebook::Graph;
 use Net::Ping;
