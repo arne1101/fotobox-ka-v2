@@ -1,5 +1,5 @@
 package FotoboxApp;
-use Dancer ':syntax';
+use Dancer2 ':syntax';
 use Fotobox;
 #use Facebook::Graph;
 use Net::Ping;
@@ -270,7 +270,7 @@ get '/branding' => sub {
     };
 };
 
-# Fake-Ansicht fŸr 4er Foto
+# Fake-Ansicht fÅ¸r 4er Foto
 get '/montage' => sub {
     
     set 'layout' => 'fotobox-main';
@@ -574,7 +574,7 @@ get '/print/confirm' => sub {
     }; 
 };
 
-# Showroom fŸr die zuletzt gemachten Fotos zum Verkauf
+# Showroom fÅ¸r die zuletzt gemachten Fotos zum Verkauf
 get '/showroom' => sub {
     
     my $dir = $fotobox->getThumbnailPath();
