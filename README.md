@@ -1,3 +1,16 @@
+## New Hardware up and running
+### 2018-05-12
+
+Some days ago my new 3b+ version of the pi finally arrived. I've set everything up and it is running now. I also moved to Dancer2 and I now use plackup as Webserver for my App.
+I've also talked to some friends about feature they'd like to see in my booth and the outcome was: video. So I also orderes a v2 camera module :-) 
+
+Next steps are to put the new screen into the housing and so adapt everything to the new screen dimensions.
+
+Since my booth is quite booked during the next weeks, I'll not touch the running system and wait to replace the screen some weeks.
+
+Cheers,
+Arne
+
 ## The new screen has arrived
 ### 2018-05-04
 
