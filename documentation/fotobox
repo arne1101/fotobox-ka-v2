@@ -1,0 +1,23 @@
+### BEGIN INIT INFO
+# Provides: fotobox Required-Start: $remote_fs $syslog Required-Stop: $remote_fs $syslog Default-Start: 2 3 4 5 Default-Stop: 0 1 6 
+# Short-Description: Fotobox initscript Description: This service is used to manage the fotobox
+### END INIT INFO
+case "$1" in
+    start)
+        echo "Starting fotobox"
+        perl /var/www/FotoboxApp/bin/app.psgi>/dev/null &
+        ;;
+    stop)
+        echo "Stopping fotobox"
+        killall plackup
+        ;;
+    restart)
+       echo "Restarting fotobox"
+       killall plackup
+       plackup /var/www/FotoboxApp/bin/app.psgi>/dev/null &
+       ;;
+    *)
+        echo "Usage: /etc/init.d/servod start|stop|restart"
+        exit 1
+        ;; esac
+exit 0

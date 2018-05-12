@@ -1,0 +1,6 @@
+
+1. Autostart and Start-/Stopp Script
+
+- copy file "fotobox" to /etc/init.d/fotobox
+- sudo chmod +x /etc/init.d/fotobox
+- sudo update-rc.d fotobox defaults
