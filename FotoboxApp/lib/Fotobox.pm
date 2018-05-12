@@ -199,13 +199,18 @@ sub createFotoStrip {
 }
 
 sub copyToExternalDrive {
-    my $Objekt = shift;
-    my $file = shift;
+	my $Objekt = shift;
+	my $file = shift;
     
-    # command to copy the given file to the external Drive
-    my $cmd = "sudo cp $photoPath.$file $externalDrive.$file";
-    # run command
-    my $rc = system($cmd);     
+    	# command to copy the given file to the external Drive
+    	my $cmd = "sudo cp $photoPath$file $externalDrive";
+    
+	# run command
+    	my $rc = system($cmd);     
+	if ($rc != 0) {
+		die "$cmd /n $rc";
+	}
+
 }
 
 
