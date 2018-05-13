@@ -3,7 +3,7 @@
       <div class="small-12 columns">
 		<div class="small-7 columns">
 		<a href="<% request.uri_base %>/new?strip=0"><img src="<% request.uri_base %>/images/photo_start_1.png" class="h64 w64 margin-30-right"></a>
-		<a href="<% request.uri_base %>/new?strip=1"><img src="<% request.uri_base %>/images/photo_start_4.png" class="h64 w64 margin-30-right"></a>‚	
+		<a href="<% request.uri_base %>/new?strip=1"><img src="<% request.uri_base %>/images/photo_start_4.png" class="h64 w64 margin-30-right"></a>	
 		<a href="<% request.uri_base %>/gallery"><img src="<% request.uri_base %>/images/gallery_start.png" class="h64 w64 margin-30-right"></a>
         <a href="<% request.uri_base %>/gif?foto=<% foto_filename %><img src="<% request.uri_base %>/images/gif.png" class="h64 w64 margin-30-right"></a>
 		</div>
