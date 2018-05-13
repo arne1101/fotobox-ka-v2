@@ -33,6 +33,26 @@ my $foto4;
 
 $| = 1;
 
+
+
+hook before => sub {
+    if (request->path =~ m{^/foto4/}) {
+
+
+        if ($x4 == 1) {
+             $foto4 = $fotobox->takePicture();
+             $fotosRef->[3]=$foto4;
+             $x4 = 0;
+        }
+    }
+    
+};
+
+
+
+
+
+
 get '/' => sub {
     
     undef $collage;
@@ -99,24 +119,6 @@ get '/new' => sub {
     }
     
 };
-
-
-
-hook before => sub {
-    if (request->path =~ m{^/foto4/}) {
-
-
-        if ($x4 == 1) {
-             $foto4 = $fotobox->takePicture();
-             $fotosRef->[3]=$foto4;
-             $x4 = 0;
-        }
-    }
-    
-};
-
-
-
 
 get '/start' => sub {
     set 'layout' => 'fotobox-main';
