@@ -36,9 +36,7 @@ $| = 1;
 
 
 hook before => sub {
-    if (request->path =~ m{^/foto4/}) {
-
-
+    if (request->path =~ m{^/foto4}) {
         if ($x4 == 1) {
              $foto4 = $fotobox->takePicture();
              $fotosRef->[3]=$foto4;
