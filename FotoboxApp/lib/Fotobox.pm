@@ -189,7 +189,7 @@ sub createFotoStrip {
 	        # copy the strip to external drive
 	        copyToExternalDrive("Fotobox", $fotoStrip);
             #create gif
-            createGif("Fotobox", $counter, $fotos[0], $fotos[1], $fotos[2], $fotos[3])
+            createGif("Fotobox", $counter, $fotos[0], $fotos[1], $fotos[2], $fotos[3]);
             # return strip
         	return $fotoStrip;
 	} else {
