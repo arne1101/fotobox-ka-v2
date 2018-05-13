@@ -202,49 +202,57 @@ get '/foto3' => sub {
     };
 };
 
-get '/foto4' => sub {
-    my $foto;
-    
-    if ($x4 == 1) {
-         $foto = $fotobox->takePicture();
-         $fotosRef->[3]=$foto;
-         $x4 = 0;
-    }
+hook before => sub {
+        
+        
+};
 
-    $timer = 0;
-    
-    set 'layout' => 'fotobox-main';
-    if ($collage == 0) {
-       
-        # Wenn Einzelfoto, dann gehe zu direkt zu Fotoanzeige
-        if ($OptionBranding == 1) {
-            template 'fotobox_foto',
+get '/foto4' => sub {
+
+    delayed {
+        my $foto;
+
+        if ($x4 == 1) {
+             $foto = $fotobox->takePicture();
+             $fotosRef->[3]=$foto;
+             $x4 = 0;
+        }
+
+        $timer = 0;
+
+        set 'layout' => 'fotobox-main';
+        if ($collage == 0) {
+
+            # Wenn Einzelfoto, dann gehe zu direkt zu Fotoanzeige
+            if ($OptionBranding == 1) {
+                template 'fotobox_foto',
+                {
+                    'foto_filename' => $fotosRef->[3],
+                    'redirect_uri' => "branding",
+                    'timer' => $timer,
+                    'number' => 'blank'
+                };
+            } else
             {
-                'foto_filename' => $fotosRef->[3],
-                'redirect_uri' => "branding",
-                'timer' => $timer,
-                'number' => 'blank'
-            };
-        } else
-        {
+                template 'fotobox_foto',
+                {
+                    'foto_filename' => $fotosRef->[3],
+                    'redirect_uri' => "fotostrip",
+                    'timer' => $timer,
+                    'number' => 'blank'
+                };
+            }
+        } else {
+            # Wenn 4er Foto, dann gehe zu Fake-Anzeige vor Generierung der Collage
             template 'fotobox_foto',
             {
                 'foto_filename' => $fotosRef->[3],
                 'redirect_uri' => "fotostrip",
                 'timer' => $timer,
-                'number' => 'blank'
+                'number' => '4_4'
             };
+
         }
-    } else {
-        # Wenn 4er Foto, dann gehe zu Fake-Anzeige vor Generierung der Collage
-        template 'fotobox_foto',
-        {
-            'foto_filename' => $fotosRef->[3],
-            'redirect_uri' => "fotostrip",
-            'timer' => $timer,
-            'number' => '4_4'
-        };
-        
     }
 };
 
