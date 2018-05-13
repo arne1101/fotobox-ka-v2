@@ -483,7 +483,7 @@ get '/gif' => sub {
         'foto_filename' => $foto, 
     };
     
-}
+};
 
 
 get '/mail' => sub {
