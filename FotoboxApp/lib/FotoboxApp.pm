@@ -17,7 +17,7 @@ my $upload;
 my $mail;
 my $print;
 my $timer = 5;
-my $skip = 0;
+my $skip = 1;
 my $fotoStrip;
 my $branding;
 my $secondLogo;
@@ -136,18 +136,14 @@ get '/strip' => sub {
 
 get '/foto1' => sub {
     my $foto;
+    if ($x1 == 1) {
+        $foto = $fotobox->takePicture();
+        $fotosRef->[0]=$foto;
+        $x1 = 0;
+    }
     
-    if ($skip eq 0) {
-        if ($x1 == 1) {
-            $foto = $fotobox->takePicture();
-            $fotosRef->[0]=$foto;
-            $x1 = 0;
-        }
-
-        if ($fotosRef->[0] =~ m/error/) {
-                 redirect '/single?foto='.$fotosRef->[0];
-        }
-        $skip = 1;
+    if ($fotosRef->[0] =~ m/error/) {
+             redirect '/single?foto='.$fotosRef->[0];
     }
     
     set 'layout' => 'fotobox-main';
@@ -163,18 +159,15 @@ get '/foto1' => sub {
 get '/foto2' => sub {
     
     my $foto;
-    
-    if ($skip eq 0) {
-        if ($x2 == 1) {
-            $foto = $fotobox->takePicture();
-            $fotosRef->[1]=$foto;
-            $x2 = 0;
-        }
-        if ($fotosRef->[1] =~ m/error/) {
-                 redirect '/single?foto='.$fotosRef->[1];
-        }
-        $skip = 1;
+    if ($x2 == 1) {
+        $foto = $fotobox->takePicture();
+        $fotosRef->[1]=$foto;
+        $x2 = 0;
     }
+    if ($fotosRef->[1] =~ m/error/) {
+             redirect '/single?foto='.$fotosRef->[1];
+    }
+   
     
     set 'layout' => 'fotobox-main';
     template 'fotobox_foto',
@@ -189,19 +182,15 @@ get '/foto2' => sub {
 get '/foto3' => sub {
 
     my $foto;
-    
-    if ($skip eq 0) {
-    
-        if ($x3 == 1) {
-            $foto = $fotobox->takePicture();
-            $fotosRef->[2]=$foto;
-            $x3 = 0;
-        }
-        if ($fotosRef->[2] =~ m/error/) {
-                 redirect '/single?foto='.$fotosRef->[2];
-        }
-        $skip = 1;
+    if ($x3 == 1) {
+        $foto = $fotobox->takePicture();
+        $fotosRef->[2]=$foto;
+        $x3 = 0;
     }
+    if ($fotosRef->[2] =~ m/error/) {
+             redirect '/single?foto='.$fotosRef->[2];
+    }
+
     
     set 'layout' => 'fotobox-main';
     template 'fotobox_foto',
@@ -216,20 +205,17 @@ get '/foto3' => sub {
 get '/foto4' => sub {
     my $foto;
     
-    if ($skip eq 0) {
-        if ($x4 == 1) {
-             $foto = $fotobox->takePicture();
-             $fotosRef->[3]=$foto;
-             $x4 = 0;
-        }
-    $skip = 1;
+    if ($x4 == 1) {
+         $foto = $fotobox->takePicture();
+         $fotosRef->[3]=$foto;
+         $x4 = 0;
     }
 
     $timer = 0;
-
+    
     set 'layout' => 'fotobox-main';
     if ($collage == 0) {
-
+       
         # Wenn Einzelfoto, dann gehe zu direkt zu Fotoanzeige
         if ($OptionBranding == 1) {
             template 'fotobox_foto',
@@ -258,9 +244,8 @@ get '/foto4' => sub {
             'timer' => $timer,
             'number' => '4_4'
         };
-
+        
     }
-
 };
 
 # Branding Foto Ansicht
