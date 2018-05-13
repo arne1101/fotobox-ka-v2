@@ -29,6 +29,8 @@ my $x4 = 1;
 my $xGal = 1;
 my $xBrand = 1;
 
+my $foto4;
+
 $| = 1;
 
 get '/' => sub {
@@ -97,6 +99,24 @@ get '/new' => sub {
     }
     
 };
+
+
+
+hook before => sub {
+    if (request->path =~ m{^/foto4/}) {
+
+
+        if ($x4 == 1) {
+             $foto4 = $fotobox->takePicture();
+             $fotosRef->[3]=$foto4;
+             $x4 = 0;
+        }
+    }
+    
+};
+
+
+
 
 get '/start' => sub {
     set 'layout' => 'fotobox-main';
@@ -209,51 +229,45 @@ hook before => sub {
 
 get '/foto4' => sub {
 
-    delayed {
-        my $foto;
 
-        if ($x4 == 1) {
-             $foto = $fotobox->takePicture();
-             $fotosRef->[3]=$foto;
-             $x4 = 0;
-        }
+  
 
-        $timer = 0;
+    $timer = 0;
 
-        set 'layout' => 'fotobox-main';
-        if ($collage == 0) {
+    set 'layout' => 'fotobox-main';
+    if ($collage == 0) {
 
-            # Wenn Einzelfoto, dann gehe zu direkt zu Fotoanzeige
-            if ($OptionBranding == 1) {
-                template 'fotobox_foto',
-                {
-                    'foto_filename' => $fotosRef->[3],
-                    'redirect_uri' => "branding",
-                    'timer' => $timer,
-                    'number' => 'blank'
-                };
-            } else
+        # Wenn Einzelfoto, dann gehe zu direkt zu Fotoanzeige
+        if ($OptionBranding == 1) {
+            template 'fotobox_foto',
             {
-                template 'fotobox_foto',
-                {
-                    'foto_filename' => $fotosRef->[3],
-                    'redirect_uri' => "fotostrip",
-                    'timer' => $timer,
-                    'number' => 'blank'
-                };
-            }
-        } else {
-            # Wenn 4er Foto, dann gehe zu Fake-Anzeige vor Generierung der Collage
+                'foto_filename' => $fotosRef->[3],
+                'redirect_uri' => "branding",
+                'timer' => $timer,
+                'number' => 'blank'
+            };
+        } else
+        {
             template 'fotobox_foto',
             {
                 'foto_filename' => $fotosRef->[3],
                 'redirect_uri' => "fotostrip",
                 'timer' => $timer,
-                'number' => '4_4'
+                'number' => 'blank'
             };
-
         }
+    } else {
+        # Wenn 4er Foto, dann gehe zu Fake-Anzeige vor Generierung der Collage
+        template 'fotobox_foto',
+        {
+            'foto_filename' => $fotosRef->[3],
+            'redirect_uri' => "fotostrip",
+            'timer' => $timer,
+            'number' => '4_4'
+        };
+
     }
+
 };
 
 # Branding Foto Ansicht
