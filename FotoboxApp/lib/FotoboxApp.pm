@@ -1,11 +1,8 @@
 package FotoboxApp;
 use Dancer2 ':syntax';
 use Fotobox;
-#use Facebook::Graph;
 use Net::Ping;
 use List::MoreUtils 'first_index'; 
-
-our $VERSION = '1.0';
 
 # Enable Branding Option
 # 1 = Branding enabled
@@ -473,6 +470,20 @@ get '/single' => sub {
         
     };
 };
+
+get '/gif' => sub {
+    
+    my $foto = params->{foto};
+    
+    $foto =~ tr/\.jpg/\.gif/;
+    
+    set 'layout' => 'fotobox-main-gallery';
+    template 'fotobox_fotostrip',
+    {
+        'foto_filename' => $foto, 
+    };
+    
+}
 
 
 get '/mail' => sub {

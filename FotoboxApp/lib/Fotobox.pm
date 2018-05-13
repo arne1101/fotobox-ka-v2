@@ -185,17 +185,50 @@ sub createFotoStrip {
 	if ($rc eq 0) {
         	# if not error
         	# create thumbail 
-		createThumbnail("Fotobox", $fotoStrip);
+            createThumbnail("Fotobox", $fotoStrip);
 	        # copy the strip to external drive
 	        copyToExternalDrive("Fotobox", $fotoStrip);
-		# return strip
+            #create gif
+            createGif("Fotobox", $counter, $fotos[0], $fotos[1], $fotos[2], $fotos[3])
+            # return strip
         	return $fotoStrip;
 	} else {
-        # if error, return error
-		return "general-error.png";
+            # if error, return error
+            return "general-error.png";
 	}
 	
 	
+}
+
+sub createGif {
+
+    my $Objekt = shift;
+	my $counter = shift;
+    my $foto1 = shift;
+    my $foto2 = shift;
+    my $foto3 = shift;
+    my $foto4 = shift;
+	
+    my $gif  = "strip_$counter.gif"
+    
+    my $rc;
+    my $cmd = "convert -delay 100 -loop 0 $photoPath$foto1 $photoPath$foto2 $photoPath$foto3 $photoPath$foto4 $photoPath$gif";
+    
+    $rc = system($cmd);
+    
+    if ($rc eq 0) {
+        	# if not error
+	        # copy the strip to external drive
+	        copyToExternalDrive("Fotobox", $gif);
+            # return strip
+        	return $gif;
+	} else {
+            # if error, return error
+            return "general-error.png";
+	}
+    
+    
+
 }
 
 sub copyToExternalDrive {
