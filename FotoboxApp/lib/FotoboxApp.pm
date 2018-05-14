@@ -1,7 +1,5 @@
 package FotoboxApp;
 use Dancer2;
-use Fotobox;
-use Net::Ping;
 use List::MoreUtils 'first_index'; 
 
 # Enable Branding Option
@@ -9,8 +7,6 @@ use List::MoreUtils 'first_index';
 # 0 = Branding disabled
 my $OptionBranding = 0;
 
-
-my $fotobox = Fotobox->new();
 my @fotos;
 my $fotosRef = \@fotos;
 my $upload;
@@ -106,25 +102,6 @@ get '/start' => sub {
     };
 };
 
-get '/chooseLogo' => sub {
-    set 'layout' => 'fotobox-main';
-    template 'fotobox_logo',
-    {
-        'redirect_uri' => "setLogo",
-    };
-};
-
-get '/setLogo' => sub {
-    set 'layout' => 'fotobox-main';
-    $secondLogo = params->{logo};
-    redirect '/start';
-};
-
-get '/screensaver' => sub {
-    set 'layout' => 'fotobox-main';
-    template 'fotobox_screensaver';
-};
-
 get '/strip' => sub {
     $collage = 1;
     set 'layout' => 'fotobox-main';
@@ -137,7 +114,7 @@ get '/strip' => sub {
 get '/foto1' => sub {
     my $foto;
     if ($x1 == 1) {
-        $foto = $fotobox->takePicture();
+        $foto = takePicture();
         $fotosRef->[0]=$foto;
         $x1 = 0;
     }
@@ -160,7 +137,7 @@ get '/foto2' => sub {
     
     my $foto;
     if ($x2 == 1) {
-        $foto = $fotobox->takePicture();
+        $foto = takePicture();
         $fotosRef->[1]=$foto;
         $x2 = 0;
     }
@@ -183,7 +160,7 @@ get '/foto3' => sub {
 
     my $foto;
     if ($x3 == 1) {
-        $foto = $fotobox->takePicture();
+        $foto = takePicture();
         $fotosRef->[2]=$foto;
         $x3 = 0;
     }
@@ -206,7 +183,7 @@ get '/foto4' => sub {
     my $foto;
     
     if ($x4 == 1) {
-         $foto = $fotobox->takePicture();
+         $foto = takePicture();
          $fotosRef->[3]=$foto;
          $x4 = 0;
     }
@@ -252,7 +229,7 @@ get '/foto4' => sub {
 get '/branding' => sub {
     
     if ($xBrand == 1) {
-       $branding = $fotobox->brandingPhoto($fotosRef->[3], $secondLogo);
+       $branding = brandingPhoto($fotosRef->[3], $secondLogo);
        $xBrand = 0;
     } 
     
@@ -295,9 +272,9 @@ get '/fotostrip' => sub {
     
     if ($skip eq 0){
         if ($collage == 1) {
-            $fotoStrip = $fotobox->createFotoStrip($fotosRef);
+            $fotoStrip = createFotoStrip($fotosRef);
             if ($OptionBranding == 1) {
-                $fotoStrip = $fotobox->brandingPhoto($fotoStrip);
+                $fotoStrip = brandingPhoto($fotoStrip);
             }
             $skip = 1;      
         } if ($collage == 0) {
@@ -319,360 +296,195 @@ get '/fotostrip' => sub {
 
 
 
-# Gallerie
-get '/gallery' => sub {
-    
-    my $dir = $fotobox->getThumbnailPath();
-    my $thDir = '/gallery/thumbs/';
+# config
+my $appPath = '/var/www/FotoboxApp/';
+my $photoPath = '/var/www/FotoboxApp/public/gallery/';
+my $thumbnailPath = $photoPath.'thumbs/';
+my $externalDrive = '/media/usb/';
+my $tempPath = '/var/tmp/';
+my $brandingDir = '/var/www/FotoboxApp/public/branding/';
 
-    my @galleryFoto;
-    my $gal;
-    my $next;
-    my $last;
+sub getPhotoPath {
+	# Path for photos
+	return $photoPath;
+	
+	}
 
-    if ($xGal == 1) {
-        
-    opendir DIR, $dir or die $!;
-        while(my $entry = readdir DIR ){
-            if ($OptionBranding == 1) {
-                if ($entry =~ m/branding_/) {
-                    push (@galleryFoto, $entry);
-                }
-            } else {
-                if ($entry =~ m/foto_/ or $entry =~ m/strip_/) {
-                   push (@galleryFoto, $entry);
-                }
-            }
-        }
-    closedir DIR;
-    
-    $xGal = 0;
-    }
-        
-    # Schwarzsche Transformation zum sortieren nach Zeit
-    # name -> [mdate,name] -> sort() -> name
-    @galleryFoto=map{$_->[1]}sort{$a->[0] <=> $b->[0]}map{[-M "$dir/$_",$_]}@galleryFoto;
-    
-    
-        $gal = '<div class="galleryWide">'."\n";
-        my $i = 1;
-        foreach (@galleryFoto) { 
-                $gal = $gal.'<a class="th margin-10-top margin-30-right" href="single?foto='.$_.'"><img class="gallery-thumb" src="'.$thDir.$_.'"></a>';
-            if ($i == 50) {
-                last;
-            }
-            $i++;
-            
-         }
-        
-        $gal = $gal.'</div>'."\n";
-     
-    set 'layout' => 'fotobox-main';
-    template 'fotobox_gallery',
-    {
-        'gallery' => $gal
-    };
-};
+sub getThumbnailPath {
+	# Path for Thumbnails
+	return $thumbnailPath;	
+}
 
-# Zufallsbild
-get '/random' => sub {
-    
-    my $dir = $fotobox->getPhotoPath();
-    my $thDir = '/gallery/thumbs/';
-    my @gallery;
-        
-    opendir DIR, $dir or die $!;
-    while(my $entry = readdir DIR ){
-        if ($OptionBranding == 1) {
-            if ($entry =~ m/branding_/) {
-                push (@gallery, $entry);
-            }
+sub takePicture {
+
+	my $rc;
+	my $return;
+	undef $return;
+	
+	# Pruefe ob Kamera angeschlossen. Return muss "usb:" im Text haben
+	$return =  `gphoto2 --auto-detect`;
+        # Testrun
+	#$return = 'usb:';
+	
+	my $counter;
+	my $filename;
+	my $thumbExec;
+	my $branding;
+	
+        #pruefe ob kamera angeschlossen (return enhaelt USB)
+        if ($return =~ m/usb:/) {
+			
+			# Bildernummer holen / erstellen
+			$counter = countPhoto("Fotobox");
+			# Dateiname bestimmen
+			$filename = "foto_$counter.jpg";
+			
+			# Foto aufnehmen und herunterladen
+			my $return = `gphoto2 --capture-image-and-download --filename=$photoPath$filename`;
+			
+			# Pruefe ob Foto erfolgreich gespeichert wurde
+			if (!-e $photoPath.$filename) {
+				# wenn kein Foto gespeichert, dann Fehlerbild zurueck geben 
+				return "no-photo-error.png";
+			}
+			else {
+				# Thumbnail erstellen wenn Foto erfolgreich aufgenommen wurde
+				$thumbExec = createThumbnail($filename);
+				
+               			# Save photo to an external Deive
+               			# This might slow down the time from capture to viewing the picture, maybe I should make this async
+               			# Copy photo to external Drive
+               			copyToExternalDrive($filename);
+				### ERGEBNIS WIRD HIER NICHT GEFRUEFT
+			}
+
+		
         } else {
-            if ($entry =~ m/foto_/ or $entry =~ m/strip_/) {
-               push (@gallery, $entry);
-            }
-        }
-    }
-    closedir DIR;
-    
-      
-        my $randomelement = $gallery[rand @gallery];
-       
-     
-    set 'layout' => 'fotobox-main';
-    template 'fotobox_random',
-    {
-        'foto_filename' => $randomelement
-    };
-};
+		# wenn keine Kamera gefunden, Fehlerbild zurueck geben
+		die "Kamera nicht gefunden: Detect: $return";
+		#return "no-cam-error.png";
+	}
+	
+	
+	return $filename;
+}
 
-
-get '/single' => sub {
-    
-    my $foto = params->{foto};
-    my $next;
-    my $last;
-    
-    my $dir = $fotobox->getThumbnailPath();
-    my $thDir = '/gallery/thumbs/';
-    my @galleryFoto;
-    my $gal;
-    
-    $xGal = 1;
-    
-    
-    opendir DIR, $dir or die $!;
-        while(my $entry = readdir DIR ){
-            if ($OptionBranding == 1) {
-                if ($entry =~ m/branding_/) {
-                    push (@galleryFoto, $entry);
-                }
-            } else {
-                if ($entry =~ m/foto_/ or $entry =~ m/strip_/) {
-                   push (@galleryFoto, $entry);
-                }
-            }
-        }
-    closedir DIR;
-    
-    # Schwarzsche Transformation zum sortieren nach Zeit
-    # name -> [mdate,name] -> sort() -> name
-    @galleryFoto=map{$_->[1]}sort{$a->[0] <=> $b->[0]}map{[-M "$dir/$_",$_]}@galleryFoto;
-    
-    # Suche Foto und gib index zurueck
-    my $i = first_index { /$foto/ } @galleryFoto;
-    
-    # Pruefe ob naechstes Foto (=index +1) vorhanden
-    if (defined $galleryFoto[$i+1]) {
-        # true = setze $next auf naechstes Foto
-        $next = $galleryFoto[$i+1];
-    } else {
-        # false - $next = aktuelles foto
-        $next = $foto;
-    }
-    
-    #gleiches mit vorherigem foto
-    if ($i == 0) {
-        #wenn 1. Foto, dann kein Vorgaenger
-        $last = $foto;
-    } elsif (defined $galleryFoto[$i-1]) {
-        $last = $galleryFoto[$i-1];
-    } else {
-        $last = $foto;
-    }
-
-    set 'layout' => 'fotobox-main-gallery';
-    template 'fotobox_fotostrip',
-    {
-        'foto_filename' => $foto,
-        'next' => $next,
-        'last' => $last
+sub createThumbnail {
+	
+	    # Thumbnailbild erstellen
+	
+        my $filename = shift;
         
-    };
-};
-
-
-get '/mail' => sub {
-    undef $mail;
-    $mail  = params->{foto};
-#    my $p = Net::Ping->new();
-#    if ($p->ping("www.fotobox-ka.de")) {
-#       
-#    } else {
-#        redirect '/mail/offline/';
-#    }
-#    $p->close();
-    
-   
-    set 'layout' => 'fotobox-main';
-    template 'fotobox_mail',
-    {
-        'message' => 'E-Mail',
-        'text' => 'Hier kannst du dein Foto per Mail versenden.',
-        'foto_filename' => $mail,
-        'code' => ''
-    };
-    
-};
-
-get '/mail/offline/' => sub {
-    set 'layout' => 'fotobox-main';
-    template 'fotobox_mail',
-    {
-        'message' => 'Sorry. E-Mail steht nicht zur Verf&uuml;gung.',
-         'text' => 'Es besteht keine Verbindung zum Internet.',
-        'foto_filename' => $mail,
-        'code' => ''
-    };
-};
-
-get '/mail/send/' => sub {
-    
-    my $to = params->{mail};
-    $to =~ tr/[%40]/[@]/;
-    my $subject = "Hier kommt dein Foto von fotobox-ka.de";
-    my $message ="www.fotobox-ka.de<br /><br />www.facebook.com/fotobox.ka";
-    my $foto = $mail;
-    
-    
-    $fotobox->sendMail($to,$subject,$message,$foto);
-    
-    set 'layout' => 'fotobox-main';
-    template 'fotobox_mail',
-    {
-        'message' => 'Viel Spa&szlig; mit deinem Foto!',
-        'text' => 'E-Mail wurde an '.$to.' verschickt. ',
-        'warning' =>'Bitte schaue auch in deinem SPAM-Ordner nach.',
-        'foto_filename' => $mail,  
-    };
-};
-
-
-
-
-get '/print' => sub {
-    undef $print;
-    $print = params->{foto};
-    $print =~ /(?:\d*\.)?\d+/g;
-    
-    my $message = 'Willst du das Foto wirklich drucken?';
-    my $text = 'Klicke auf den Drucker um das Foto auszudrucken.';
-    my $code = '<a href="print/confirm?foto='.$print.'"><img src="images/print.png" class="h64 w64 margin-30-right" ></a>';
-
-
-    set 'layout' => 'fotobox-main';
-    template 'fotobox_print',
-    {
-        'message' => $message,
-        'text' => $text,
-        'foto_filename' => $print,
-        'code' => $code
-    }; 
-    
-    
-};
-
-get '/print/confirm' => sub {
-    $print = params->{foto};
-    my $template = 'fotobox_print';
-    my $printer = 'fotoboxdrucker';
-
-    my $rc;
-
-    $rc = $fotobox->printPhoto($print, $printer);
-      
-    set 'layout' => 'fotobox-main';
-    template $template,
-    {
-         'message' => 'Dein Foto wird ausgedruckt',
-         'text' => '',
-         'foto_filename' => $print,
-         'code' => ''
-    }; 
-};
-
-# Showroom fŸr die zuletzt gemachten Fotos zum Verkauf
-get '/showroom' => sub {
-    
-    my $dir = $fotobox->getThumbnailPath();
-    my $thDir = '/gallery/thumbs/';
-
-    my @galleryFoto;
-    my $gal;
+        my $result = 1;
         
-    opendir DIR, $dir or die $!;
-        while(my $entry = readdir DIR ){
-            if ($OptionBranding == 1) {
-                if ($entry =~ m/branding_/) {
-                    push (@galleryFoto, $entry);
-                }
-            } else {
-                if ($entry =~ m/foto_/ or $entry =~ m/strip_/) {
-                   push (@galleryFoto, $entry);
-                }
-            }
-        }
-    closedir DIR;
+        # epeg befehl zum verkleinern
+        my $cmd = 'sudo epeg --width=1072 --height=712 '."$photoPath"."$filename".' '."$thumbnailPath"."$filename";
         
-    # Schwarzsche Transformation zum sortieren nach Zeit
-    # name -> [mdate,name] -> sort() -> name
-    @galleryFoto=map{$_->[1]}sort{$a->[0] <=> $b->[0]}map{[-M "$dir/$_",$_]}@galleryFoto;
-    
-    $gal = '<ul class="small-block-grid-3">'."\n";
-    my $i = 1;
-    foreach (@galleryFoto) {
-            $_ =~ /(?:\d*\.)?\d+/g;
-             $gal = $gal.'<li><figure><a href="gallery/'.$_.'"><img src="'.$thDir.$_.'"></a><figcaption>Foto: '.$&.'</figcaption></figure></li>';
-        if ($i == 6) {
-            last;
-        }
-        $i++;
-     }
+        # befehl ausfuehren und ergebnis zurueck liefern, ergebnis wird derzeit nicht ueberprueft
+        my $rc = system($cmd);       
         
-        
-    $gal = $gal.'</ul>'."\n";
-     
-    set 'layout' => 'fotobox-main';
-    template 'fotobox_showroom',
-    {
-        'gallery' => $gal,
-        'timer' => '60',
-        'redirect' => 'showroom'
-    };
-};
+        return $rc;
+}
 
-# Kasse
-get '/checkout' => sub {
-    
-    my $dir = $fotobox->getThumbnailPath();
-    my $thDir = '/gallery/thumbs/';
+sub brandingPhoto {
+	
+	# Wenn Branding, dann wird das Foto gebranded	
+	my $foto = shift;
+	# Hauptlogo
+	my $brandingLogo = $brandingDir.'logo.png';
+	# Zweites Logo
+	my $x = shift;
+	my $logo = $brandingDir.$x.".png";
 
-    my @galleryFoto;
-    my $gal;
+	# Datei fuer Hintergrundbild
+	#my $hg = $brandingDir.'HG.jpg';
+	
+	# Original Foto
+	$orig = $photoPath.$foto;
+	
+	# Temporaere Bilddatei fuer Foto
+	my $tmp = $brandingDir.'tmp.png';
+	# Fertiges Foto
+	my $branding = $photoPath.'branding_'.$foto;
+	
+	# Foto (Thumbnail) rotieren (-2 Grad) und in tmp Datei schreiben
+	#my $cmd1 = "convert -background none -rotate -2 $thumbnailPath$foto $tmp";
+	# rotiertes Foto auf Hintergrund positionieren
+	#my $cmd2 = "composite -geometry +98+110 $tmp $hg $branding";
+	
+	# Hauptlogo platzieren und in Tempdatei schreiben
+	my $cmd1 = "composite -geometry +1060+1195 $brandingLogo $orig $tmp";
+	# Zweites Logo platzieren platzieren und in finales Bild schreiben
+	my $cmd2 = "composite -geometry +70+60 $logo $tmp $branding";
+	
+	my $rc1 = system($cmd1);
+	my $rc2 = system($cmd2);
+	
+	# Thumbnail vom fertigen Branding Foto erstellen
+	my $rc3 = createThumbnail('branding_'.$foto);
+	
+	if ($rc1 eq 0 && $rc2 eq 0 && $rc3 eq 0) {
+		# If not error
+        # Copy photot to exteral drive
+        # maybe this works...
+        copyToExternalDrive('branding_'.$foto);
+        # return branded photo
+        return 'branding_'.$foto;    
+	} else {
+		#Fehler zurueck geben
+		return "no-photo-error.png";
+	}	
+}
+
+sub createFotoStrip {
+	
+	# 4er Fotostreifen erstellen
+	
+	my(@fotos) = @{(shift)};
+	my $counter = countPhoto("Fotobox");
+	my $fotoStrip = "strip_$counter.jpg";
+	
+	my $rc;
+	my $cmd;
+
+	$cmd =
+	"montage -size 1024x680 -geometry 1024x680 -tile 2x -border 2 -bordercolor white "
+	."$thumbnailPath$fotos[0] $thumbnailPath$fotos[1] $thumbnailPath$fotos[2] $thumbnailPath$fotos[3] $photoPath$fotoStrip";
+	
+	$rc = system($cmd);
+	
+	if ($rc eq 0) {
+        	# if not error
+        	# create thumbail 
+		createThumbnail($fotoStrip);
+	        # copy the strip to external drive
+	        copyToExternalDrive($fotoStrip);
+		# return strip
+        	return $fotoStrip;
+	} else {
+        # if error, return error
+		return "general-error.png";
+	}
+	
+	
+}
+
+sub copyToExternalDrive {
+	my $file = shift;
     
+    	# command to copy the given file to the external Drive
+    	my $cmd = "sudo cp $photoPath$file $externalDrive";
     
-    my $header = '<center><a href="checkout">neu laden</a></center>';
-    
-    opendir DIR, $dir or die $!;
-        while(my $entry = readdir DIR ){
-            if ($OptionBranding == 1) {
-                if ($entry =~ m/branding_/) {
-                    push (@galleryFoto, $entry);
-                }
-            } else {
-                if ($entry =~ m/foto_/ or $entry =~ m/strip_/) {
-                   push (@galleryFoto, $entry);
-                }
-            }
-        }
-    closedir DIR;
-        
-    # Schwarzsche Transformation zum sortieren nach Zeit
-    # name -> [mdate,name] -> sort() -> name
-    @galleryFoto=map{$_->[1]}sort{$a->[0] <=> $b->[0]}map{[-M "$dir/$_",$_]}@galleryFoto;
-    
-    $gal = '<ul class="small-block-grid-3">'."\n";
-    my $i = 1;
-    foreach (@galleryFoto) {
-            $_ =~ /(?:\d*\.)?\d+/g;
-             $gal = $gal.'<li><figure><a href="gallery/'.$_.'"><img src="'.$thDir.$_.'"></a><figcaption>Foto: '.$&.' <a href="print/confirm?foto='.$_.'">drucken</a></figcaption></figure></li>';
-        if ($i == 20) {
-            last;
-        }
-        $i++;
-     }
-        
-    $gal = $gal.'</ul>'."\n";
-     
-    set 'layout' => 'fotobox-main';
-    template 'fotobox_showroom',
-    {
-        'header' => $header,
-        'gallery' => $gal,
-        'timer' => '120',
-        'redirect' => 'checkout'
-    };
-};
+	# run command
+    	my $rc = system($cmd);     
+	if ($rc != 0) {
+		die "$cmd /n $rc";
+	}
+
+}
+
+
+
 
 
 
