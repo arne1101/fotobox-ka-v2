@@ -1,3 +1,10 @@
+package FotoboxApp;
+use Dancer2;
+use Mail::Sender;
+
+my $mail;
+
+
 get '/mail' => sub {
     undef $mail;
     $mail  = params->{foto};    
@@ -13,23 +20,12 @@ get '/mail' => sub {
     
 };
 
-get '/mail/offline/' => sub {
-    set 'layout' => 'fotobox-main';
-    template 'fotobox_mail',
-    {
-        'message' => 'Sorry. E-Mail steht nicht zur Verf&uuml;gung.',
-         'text' => 'Es besteht keine Verbindung zum Internet.',
-        'foto_filename' => $mail,
-        'code' => ''
-    };
-};
-
 get '/mail/send/' => sub {
     
     my $to = params->{mail};
     $to =~ tr/[%40]/[@]/;
     my $subject = "Hier kommt dein Foto von fotobox-ka.de";
-    my $message ="www.fotobox-ka.de<br /><br />www.facebook.com/fotobox.ka";
+    my $message ="www.fotobox-ka.de";
     my $foto = $mail;
     
     
@@ -44,3 +40,47 @@ get '/mail/send/' => sub {
         'foto_filename' => $mail,  
     };
 };
+
+
+
+
+sub sendMail {
+	my $to = shift;
+	my $subject = shift;
+	my $message = shift;
+	my $foto = shift;
+	
+	my $attachment = $photoPath.$foto;
+	
+	my $sender = new Mail::Sender {
+                smtp => 'fotobox.local',
+				port => '25',
+                from => 'info@fotobox-ka.de',
+                auth => 'LOGIN',
+                authid => '...',
+                authpwd => '...',
+                on_errors => 'die',
+        }  or die "Can't create the Mail::Sender object: $Mail::Sender::Error\n";
+	
+	
+	 $sender->OpenMultipart({
+		  to => "$to",
+                  subject  => "$subject",
+                  ctype    => "text/html; charset=iso-8859-1",
+                  encoding => "quoted-printable"
+		}) or die $Mail::Sender::Error,"\n";
+
+	$sender->Attach(
+		{description => 'Foto',
+		 ctype => 'image/jpeg',
+		 encoding => 'Base64',
+		 disposition => 'attachment; filename="'.$foto.'"; type="Image"',
+		 file => $attachment
+		});
+	$sender->Close();
+}
+
+
+
+
+true;

@@ -1,3 +1,8 @@
+package FotoboxApp;
+use Dancer2;
+
+my $print;
+
 get '/print' => sub {
     undef $print;
     $print = params->{foto};
@@ -27,7 +32,7 @@ get '/print/confirm' => sub {
 
     my $rc;
 
-    $rc = $fotobox->printPhoto($print, $printer);
+    $rc = printPhoto($print, $printer);
       
     set 'layout' => 'fotobox-main';
     template $template,
@@ -38,3 +43,57 @@ get '/print/confirm' => sub {
          'code' => ''
     }; 
 };
+
+sub printPhoto {
+	
+	# Durcken ueber Pi
+	
+	my $foto = shift;
+	my $printer = shift;
+	
+	my $return;
+	$return = `lpstat -p`;
+	my $rc;
+	
+	if ($return =~ m/fotoboxdrucker/ or $return =~ m/Canon_Canon_CP910_ipp/) {
+		$rc = system("lp -d $printer $photoPath$foto");
+	} else {
+		return 'no-printer-error';
+	}
+	
+	if ($rc == 0) {
+		return 'success';
+	} else {
+		return "error:$rc";
+	}	
+}
+
+sub copyToPrinter {
+	
+	# Drucken ueber Drucker auf anderem PC
+	# Foto wird nur in bestimmten Ordner kopiert
+	
+	my $foto = shift;
+	
+	$foto =~ /(?:\d*\.)?\d+/g;
+	
+	my $prefix = "foto_";
+	
+	if ($foto =~ /strip/m) {
+		$prefix = "strip_";
+	} elsif ($foto =~ /branding/m){
+		$prefix = "branding_";
+	}
+	
+	my $filename = $prefix.$&.'_druck_'.countPhoto("Fotobox","printer").'.jpg';
+	my $printPath = $appPath."public/print/";
+	
+	my $cmd = "cp $photoPath$foto $printPath$filename";
+	
+	system($cmd);
+	
+	return 0;
+}
+
+
+true;

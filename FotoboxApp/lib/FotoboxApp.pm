@@ -1,5 +1,6 @@
 package FotoboxApp;
 use Dancer2;
+use FotoboxApp::FotoboxMail;
 use List::MoreUtils 'first_index'; 
 
 # Enable Branding Option
@@ -10,20 +11,11 @@ my $OptionBranding = 0;
 my @fotos;
 my $fotosRef = \@fotos;
 my $upload;
-my $mail;
-my $print;
 my $timer = 5;
 my $skip = 1;
 my $fotoStrip;
 my $branding;
-my $secondLogo;
 my $collage = 0;
-my $x1 = 1;
-my $x2 = 1;
-my $x3 = 1;
-my $x4 = 1;
-my $xGal = 1;
-my $xBrand = 1;
 
 $| = 1;
 
@@ -36,20 +28,10 @@ get '/' => sub {
     $fotosRef = \@fotos;
     undef $fotoStrip;
     undef $branding;
-    undef $secondLogo;
     $skip = 0;
     undef $timer;
     $timer = 5;
-    undef $x1;
-    undef $x2;
-    undef $x3;
-    undef $x4;
-    $x1 = 1;
-    $x2 = 1;
-    $x3 = 1;
-    $x4 = 1;
-    $xGal = 1;
-    $xBrand = 1;
+
     
     
     set 'layout' => 'fotobox-main';
@@ -69,20 +51,10 @@ get '/new' => sub {
     $fotosRef = \@fotos;
     undef $fotoStrip;
     undef $branding;
-    undef $secondLogo;
     $skip = 0;
     undef $timer;
     $timer = 5;
-    undef $x1;
-    undef $x2;
-    undef $x3;
-    undef $x4;
-    $x1 = 1;
-    $x2 = 1;
-    $x3 = 1;
-    $x4 = 1;
-    $xGal = 1;
-    $xBrand = 1;
+
     
     my $strip = params->{strip};
     
@@ -113,11 +85,10 @@ get '/strip' => sub {
 
 get '/foto1' => sub {
     my $foto;
-    if ($x1 == 1) {
-        $foto = takePicture();
-        $fotosRef->[0]=$foto;
-        $x1 = 0;
-    }
+   
+    $foto = takePicture();
+    $fotosRef->[0]=$foto;
+
     
     if ($fotosRef->[0] =~ m/error/) {
              redirect '/single?foto='.$fotosRef->[0];
@@ -136,11 +107,10 @@ get '/foto1' => sub {
 get '/foto2' => sub {
     
     my $foto;
-    if ($x2 == 1) {
-        $foto = takePicture();
-        $fotosRef->[1]=$foto;
-        $x2 = 0;
-    }
+
+    $foto = takePicture();
+    $fotosRef->[1]=$foto;
+
     if ($fotosRef->[1] =~ m/error/) {
              redirect '/single?foto='.$fotosRef->[1];
     }
@@ -159,11 +129,10 @@ get '/foto2' => sub {
 get '/foto3' => sub {
 
     my $foto;
-    if ($x3 == 1) {
-        $foto = takePicture();
-        $fotosRef->[2]=$foto;
-        $x3 = 0;
-    }
+    
+    $foto = takePicture();
+    $fotosRef->[2]=$foto;
+        
     if ($fotosRef->[2] =~ m/error/) {
              redirect '/single?foto='.$fotosRef->[2];
     }
@@ -182,11 +151,11 @@ get '/foto3' => sub {
 get '/foto4' => sub {
     my $foto;
     
-    if ($x4 == 1) {
-         $foto = takePicture();
-         $fotosRef->[3]=$foto;
-         $x4 = 0;
-    }
+    
+    $foto = takePicture();
+    $fotosRef->[3]=$foto;
+
+
 
     $timer = 0;
     
@@ -228,10 +197,9 @@ get '/foto4' => sub {
 # Branding Foto Ansicht
 get '/branding' => sub {
     
-    if ($xBrand == 1) {
-       $branding = brandingPhoto($fotosRef->[3], $secondLogo);
-       $xBrand = 0;
-    } 
+    
+    $branding = brandingPhoto($fotosRef->[3], $secondLogo);
+    
     
     $timer = 0;
     

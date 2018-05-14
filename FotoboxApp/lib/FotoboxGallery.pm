@@ -11,8 +11,6 @@ get '/gallery' => sub {
     my $next;
     my $last;
 
-    if ($xGal == 1) {
-        
     opendir DIR, $dir or die $!;
         while(my $entry = readdir DIR ){
             if ($OptionBranding == 1) {
@@ -27,8 +25,7 @@ get '/gallery' => sub {
         }
     closedir DIR;
     
-    $xGal = 0;
-    }
+
         
     # Schwarzsche Transformation zum sortieren nach Zeit
     # name -> [mdate,name] -> sort() -> name
@@ -98,9 +95,6 @@ get '/single' => sub {
     my $thDir = '/gallery/thumbs/';
     my @galleryFoto;
     my $gal;
-    
-    $xGal = 1;
-    
     
     opendir DIR, $dir or die $!;
         while(my $entry = readdir DIR ){
