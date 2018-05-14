@@ -1,11 +1,8 @@
 package FotoboxApp;
-use Dancer2 ':syntax';
+use Dancer2;
 use Fotobox;
-#use Facebook::Graph;
 use Net::Ping;
 use List::MoreUtils 'first_index'; 
-
-our $VERSION = '1.0';
 
 # Enable Branding Option
 # 1 = Branding enabled
