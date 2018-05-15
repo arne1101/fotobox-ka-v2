@@ -224,16 +224,14 @@ sub takePicture {
 
 	my $rc;
 	my $return;
-	undef $return;
-	
-	# Pruefe ob Kamera angeschlossen. Return muss "usb:" im Text haben
-	$return =  `gphoto2 --auto-detect`;
-        # Testrun
-	#$return = 'usb:';
-	
 	my $counter;
 	my $filename;
 	my $thumbExec;
+	
+	# Pruefe ob Kamera angeschlossen. Return muss "usb:" im Text haben
+	$return =  `gphoto2 --auto-detect`;
+    
+	
 	
         #pruefe ob kamera angeschlossen (return enhaelt USB)
         if ($return =~ m/usb:/) {
@@ -254,7 +252,6 @@ sub takePicture {
 			else {
 				# Thumbnail erstellen wenn Foto erfolgreich aufgenommen wurde
 				$thumbExec = createThumbnail($filename);
-				
                 # Save photo to an external Deive
                 # This might slow down the time from capture to viewing the picture, maybe I should make this async
                 # Copy photo to external Drive
@@ -264,15 +261,11 @@ sub takePicture {
         } else {
             # wenn keine Kamera gefunden, Fehlerbild zurueck geben
             die "Kamera nicht gefunden: Detect: $return";
-            #return "no-cam-error.png";
 	}
-	
-	
 	return $filename;
 }
 
 sub createThumbnail {
-	
 	    # Thumbnailbild erstellen
         my $filename = shift;
         # epeg befehl zum verkleinern
@@ -284,9 +277,7 @@ sub createThumbnail {
 
 
 sub createPhotoStrip {
-	
 	# 4er Fotostreifen erstellen
-	
 	my(@photos) = @{(shift)};
 	my $counter = countPhoto();
 	my $photoStrip = "strip_$counter.jpg";
@@ -303,13 +294,13 @@ sub createPhotoStrip {
 	if ($rc eq 0) {
         	# if not error
         	# create thumbail 
-		createThumbnail($photoStrip);
+            createThumbnail($photoStrip);
 	        # copy the strip to external drive
 	        copyToExternalDrive($photoStrip);
-		# return strip
+            # return strip
         	return $photoStrip;
 	} else {
-        # if error, return error
+        # if error, return error image
 		return "general-error.png";
 	}
 	
@@ -319,12 +310,12 @@ sub createPhotoStrip {
 sub copyToExternalDrive {
 	my $file = shift;
     
-    	# command to copy the given file to the external Drive
-    	my $cmd = "sudo cp $photoPath$file $externalDrive";
+    # command to copy the given file to the external Drive
+    my $cmd = "sudo cp $photoPath$file $externalDrive";
     
 	# run command
-    	my $rc = system($cmd);     
-	if ($rc != 0) {
+    my $rc = system($cmd);     
+    if ($rc != 0) {
 		die "$cmd /n $rc";
 	}
 
