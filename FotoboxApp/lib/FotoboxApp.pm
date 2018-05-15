@@ -72,7 +72,7 @@ get '/strip' => sub {
     set 'layout' => 'fotobox-main';
         template 'fotobox_start',
     {
-        'redirect_uri' => "takephoto1",
+        'redirect_uri' => "takephotoseries",
     };
 };
 
