@@ -1,59 +1,52 @@
+# Created by https://github.com/arne1101
+
 package FotoboxApp;
 use Dancer2;
 use FotoboxApp::FotoboxMail;
-use List::MoreUtils 'first_index'; 
+use FotoboxApp::FotoboxGallery;
 
-# Enable Branding Option
-# 1 = Branding enabled
-# 0 = Branding disabled
-my $OptionBranding = 0;
 
-my @fotos;
-my $fotosRef = \@fotos;
-my $upload;
-my $timer = 5;
-my $skip = 1;
-my $fotoStrip;
-my $branding;
-my $collage = 0;
+my $appPath = '/var/www/FotoboxApp/';
+my $photoPath = '/var/www/FotoboxApp/public/gallery/';
+my $thumbnailPath = $photoPath.'thumbs/';
+my $externalDrive = '/media/usb/';
+my $tempPath = '/var/tmp/';
+
+
 
 $| = 1;
+
+# App routes
+
+my @photos;
+my $photosRef = \@photos;
+my $timer = 5;
+my $photoStrip;
+my $collage = 0;
+my $seriesCount = 0;
 
 get '/' => sub {
     
     undef $collage;
     $collage = 0;
-    undef $upload;
-    undef @fotos ;
-    $fotosRef = \@fotos;
-    undef $fotoStrip;
-    undef $branding;
-    $skip = 0;
-    undef $timer;
-    $timer = 5;
+    undef @photos ;
+    $photosRef = \@photos;
+    undef $photoStrip;
+    $seriesCount = 0;
 
-    
-    
     set 'layout' => 'fotobox-main';
-    if ($OptionBranding == 1) {
-        template 'fotobox_branding';
-    } else {
-        template 'fotobox_index';    
-    }
+    template 'fotobox_index';    
+
     
 };
 
 get '/new' => sub {
     undef $collage;
     $collage = 0;
-    undef $upload;
-    undef @fotos ;
-    $fotosRef = \@fotos;
-    undef $fotoStrip;
-    undef $branding;
-    $skip = 0;
-    undef $timer;
-    $timer = 5;
+    undef @photos ;
+    $photosRef = \@photos;
+    undef $photoStrip;
+    $seriesCount = 0;
 
     
     my $strip = params->{strip};
@@ -70,7 +63,7 @@ get '/start' => sub {
     set 'layout' => 'fotobox-main';
     template 'fotobox_start',
     {
-        'redirect_uri' => "foto4",
+        'redirect_uri' => "takesinglephoto",
     };
 };
 
@@ -79,137 +72,99 @@ get '/strip' => sub {
     set 'layout' => 'fotobox-main';
         template 'fotobox_start',
     {
-        'redirect_uri' => "foto1",
+        'redirect_uri' => "takephoto1",
     };
 };
 
-get '/foto1' => sub {
-    my $foto;
-   
-    $foto = takePicture();
-    $fotosRef->[0]=$foto;
 
+get '/takesinglephoto' => sub {
     
-    if ($fotosRef->[0] =~ m/error/) {
-             redirect '/single?foto='.$fotosRef->[0];
-    }
-    
-    set 'layout' => 'fotobox-main';
-    template 'fotobox_foto',
-    {
-        'foto_filename' => $fotosRef->[0],
-        'redirect_uri' => "foto2",
-        'timer' => $timer,
-        'number' => '1_4'
-    };
-};
-
-get '/foto2' => sub {
-    
-    my $foto;
-
-    $foto = takePicture();
-    $fotosRef->[1]=$foto;
-
-    if ($fotosRef->[1] =~ m/error/) {
-             redirect '/single?foto='.$fotosRef->[1];
-    }
-   
-    
-    set 'layout' => 'fotobox-main';
-    template 'fotobox_foto',
-    {
-        'foto_filename' => $fotosRef->[1],
-        'redirect_uri' => "foto3",
-        'timer' => $timer,
-        'number' => '2_4'
-    };
-};
-
-get '/foto3' => sub {
-
-    my $foto;
-    
-    $foto = takePicture();
-    $fotosRef->[2]=$foto;
+    my $photo;
         
-    if ($fotosRef->[2] =~ m/error/) {
-             redirect '/single?foto='.$fotosRef->[2];
-    }
-
+    $photo = takePicture();
+    $photosRef->[3]=$photo;
     
-    set 'layout' => 'fotobox-main';
+    redirect '/start';
+
+};
+
+get '/showsinglephoto' => sub {
+    
     template 'fotobox_foto',
-    {
-        'foto_filename' => $fotosRef->[2],
-        'redirect_uri' => "foto4",
-        'timer' => $timer,
-        'number' => '3_4'
-    };
-};
-
-get '/foto4' => sub {
-    my $foto;
-    
-    
-    $foto = takePicture();
-    $fotosRef->[3]=$foto;
-
-
-
-    $timer = 0;
-    
-    set 'layout' => 'fotobox-main';
-    if ($collage == 0) {
-       
-        # Wenn Einzelfoto, dann gehe zu direkt zu Fotoanzeige
-        if ($OptionBranding == 1) {
-            template 'fotobox_foto',
-            {
-                'foto_filename' => $fotosRef->[3],
-                'redirect_uri' => "branding",
-                'timer' => $timer,
-                'number' => 'blank'
-            };
-        } else
         {
-            template 'fotobox_foto',
-            {
-                'foto_filename' => $fotosRef->[3],
-                'redirect_uri' => "fotostrip",
-                'timer' => $timer,
-                'number' => 'blank'
-            };
-        }
-    } else {
-        # Wenn 4er Foto, dann gehe zu Fake-Anzeige vor Generierung der Collage
-        template 'fotobox_foto',
-        {
-            'foto_filename' => $fotosRef->[3],
-            'redirect_uri' => "fotostrip",
-            'timer' => $timer,
-            'number' => '4_4'
-        };
-        
-    }
-};
-
-# Branding Foto Ansicht
-get '/branding' => sub {
-    
-    
-    $branding = brandingPhoto($fotosRef->[3], $secondLogo);
-    
-    
-    $timer = 0;
-    
-    set 'layout' => 'fotobox-main';
-    template 'fotobox_foto',  {
-            'foto_filename' => $branding,
+            'foto_filename' => $photosRef->[3],
             'redirect_uri' => "fotostrip",
             'timer' => $timer,
             'number' => 'blank'
-    };
+        };
+
+};
+
+get '/takephotoseries' => sub {
+    my $photo;
+   
+    $photo = takePicture();
+    $photosRef->[$seriesCount]=$photo;
+    
+    if ($photosRef->[$seriesCount] =~ m/error/) {
+             redirect '/single?foto='.$photosRef->[0];
+    }
+    
+    redirect '/showphotoseries';
+};
+
+get '/showphotoseries' => sub {
+    my $photo;
+   
+    $photo = takePicture();
+    $photosRef->[$seriesCount]=$photo;
+
+    
+    if ($photosRef->[$seriesCount] =~ m/error/) {
+             redirect '/single?foto='.$photosRef->[0];
+    }
+    
+    set 'layout' => 'fotobox-main';
+    
+    if ($seriesCount == 0) {
+        template 'fotobox_foto',
+            {
+                'foto_filename' => $photosRef->[$seriesCount],
+                'redirect_uri' => "takephotoseries",
+                'timer' => $timer,
+                'number' => '1_4'
+            };
+    } 
+    elsif ($seriesCount == 1) {
+        template 'fotobox_foto',
+            {
+                'foto_filename' => $photosRef->[$seriesCount],
+                'redirect_uri' => "takephotoseries",
+                'timer' => $timer,
+                'number' => '´2_4'
+            };
+    }    
+    elsif ($seriesCount == 2) {
+        template 'fotobox_foto',
+            {
+                'foto_filename' => $photosRef->[$seriesCount],
+                'redirect_uri' => "takephotoseries",
+                'timer' => $timer,
+                'number' => '´3_4'
+            };
+    }    
+    elsif ($seriesCount == 3) {
+        template 'fotobox_foto',
+            {
+                'foto_filename' => $photosRef->[$seriesCount],
+                'redirect_uri' => "montage",
+                'timer' => $timer,
+                'number' => '´4_4'
+            };
+    }
+
+    $seriesCount++;
+    
 };
 
 # Fake-Ansicht fŸr 4er Foto
@@ -218,11 +173,11 @@ get '/montage' => sub {
     set 'layout' => 'fotobox-main';
     template 'fotobox_montage',
     {
-        'foto_filename1' => $fotosRef->[0],
-        'foto_filename2' => $fotosRef->[1],
-        'foto_filename3' => $fotosRef->[2],
-        'foto_filename4' => $fotosRef->[3],
-        'redirect_uri' => "fotostrip",
+        'foto_filename1' => $photosRef->[0],
+        'foto_filename2' => $photosRef->[1],
+        'foto_filename3' => $photosRef->[2],
+        'foto_filename4' => $photosRef->[3],
+        'redirect_uri' => "createphotostrip",
         'timer' => $timer
     };
     
@@ -230,47 +185,29 @@ get '/montage' => sub {
 
 # Ansicht des letzten Fotos
 
-get '/fotostrip' => sub {
+get '/createphotostrip' => sub {
     my $photo;
-    if ($OptionBranding == 1) {
-        $photo = $branding;
-    } else {
-        $photo = $fotosRef->[3];
-    }
+    $photo = $photosRef->[3];
     
-    if ($skip eq 0){
-        if ($collage == 1) {
-            $fotoStrip = createFotoStrip($fotosRef);
-            if ($OptionBranding == 1) {
-                $fotoStrip = brandingPhoto($fotoStrip);
-            }
-            $skip = 1;      
-        } if ($collage == 0) {
-            $fotoStrip = $photo;                   
-        } 
-    }
+    if ($collage == 1) {
+        $photoStrip = createPhotoStrip($photosRef);
+    } else ($collage == 0) {
+        $photoStrip = $photo;                   
+    } 
     
-    $upload=$fotoStrip;
-   
-    
-    set 'layout' => 'fotobox-main';
-    template 'fotobox_fotostrip',
-    {
-        'foto_filename' => $fotoStrip
-    };
+   redirect '/showphotostrip';
     
 };
 
+get '/showfotostrip' => sub {
+    set 'layout' => 'fotobox-main';
+    template 'fotobox_fotostrip',
+    {
+        'foto_filename' => $photoStrip
+    };
+};
 
-
-
-# config
-my $appPath = '/var/www/FotoboxApp/';
-my $photoPath = '/var/www/FotoboxApp/public/gallery/';
-my $thumbnailPath = $photoPath.'thumbs/';
-my $externalDrive = '/media/usb/';
-my $tempPath = '/var/tmp/';
-my $brandingDir = '/var/www/FotoboxApp/public/branding/';
+#Subroutines 
 
 sub getPhotoPath {
 	# Path for photos
@@ -297,13 +234,12 @@ sub takePicture {
 	my $counter;
 	my $filename;
 	my $thumbExec;
-	my $branding;
 	
         #pruefe ob kamera angeschlossen (return enhaelt USB)
         if ($return =~ m/usb:/) {
 			
 			# Bildernummer holen / erstellen
-			$counter = countPhoto("Fotobox");
+			$counter = countPhoto();
 			# Dateiname bestimmen
 			$filename = "foto_$counter.jpg";
 			
@@ -319,18 +255,16 @@ sub takePicture {
 				# Thumbnail erstellen wenn Foto erfolgreich aufgenommen wurde
 				$thumbExec = createThumbnail($filename);
 				
-               			# Save photo to an external Deive
-               			# This might slow down the time from capture to viewing the picture, maybe I should make this async
-               			# Copy photo to external Drive
-               			copyToExternalDrive($filename);
+                # Save photo to an external Deive
+                # This might slow down the time from capture to viewing the picture, maybe I should make this async
+                # Copy photo to external Drive
+                copyToExternalDrive($filename);
 				### ERGEBNIS WIRD HIER NICHT GEFRUEFT
 			}
-
-		
         } else {
-		# wenn keine Kamera gefunden, Fehlerbild zurueck geben
-		die "Kamera nicht gefunden: Detect: $return";
-		#return "no-cam-error.png";
+            # wenn keine Kamera gefunden, Fehlerbild zurueck geben
+            die "Kamera nicht gefunden: Detect: $return";
+            #return "no-cam-error.png";
 	}
 	
 	
@@ -340,95 +274,40 @@ sub takePicture {
 sub createThumbnail {
 	
 	    # Thumbnailbild erstellen
-	
         my $filename = shift;
-        
-        my $result = 1;
-        
         # epeg befehl zum verkleinern
         my $cmd = 'sudo epeg --width=1072 --height=712 '."$photoPath"."$filename".' '."$thumbnailPath"."$filename";
-        
         # befehl ausfuehren und ergebnis zurueck liefern, ergebnis wird derzeit nicht ueberprueft
         my $rc = system($cmd);       
-        
         return $rc;
 }
 
-sub brandingPhoto {
-	
-	# Wenn Branding, dann wird das Foto gebranded	
-	my $foto = shift;
-	# Hauptlogo
-	my $brandingLogo = $brandingDir.'logo.png';
-	# Zweites Logo
-	my $x = shift;
-	my $logo = $brandingDir.$x.".png";
 
-	# Datei fuer Hintergrundbild
-	#my $hg = $brandingDir.'HG.jpg';
-	
-	# Original Foto
-	$orig = $photoPath.$foto;
-	
-	# Temporaere Bilddatei fuer Foto
-	my $tmp = $brandingDir.'tmp.png';
-	# Fertiges Foto
-	my $branding = $photoPath.'branding_'.$foto;
-	
-	# Foto (Thumbnail) rotieren (-2 Grad) und in tmp Datei schreiben
-	#my $cmd1 = "convert -background none -rotate -2 $thumbnailPath$foto $tmp";
-	# rotiertes Foto auf Hintergrund positionieren
-	#my $cmd2 = "composite -geometry +98+110 $tmp $hg $branding";
-	
-	# Hauptlogo platzieren und in Tempdatei schreiben
-	my $cmd1 = "composite -geometry +1060+1195 $brandingLogo $orig $tmp";
-	# Zweites Logo platzieren platzieren und in finales Bild schreiben
-	my $cmd2 = "composite -geometry +70+60 $logo $tmp $branding";
-	
-	my $rc1 = system($cmd1);
-	my $rc2 = system($cmd2);
-	
-	# Thumbnail vom fertigen Branding Foto erstellen
-	my $rc3 = createThumbnail('branding_'.$foto);
-	
-	if ($rc1 eq 0 && $rc2 eq 0 && $rc3 eq 0) {
-		# If not error
-        # Copy photot to exteral drive
-        # maybe this works...
-        copyToExternalDrive('branding_'.$foto);
-        # return branded photo
-        return 'branding_'.$foto;    
-	} else {
-		#Fehler zurueck geben
-		return "no-photo-error.png";
-	}	
-}
-
-sub createFotoStrip {
+sub createPhotoStrip {
 	
 	# 4er Fotostreifen erstellen
 	
-	my(@fotos) = @{(shift)};
-	my $counter = countPhoto("Fotobox");
-	my $fotoStrip = "strip_$counter.jpg";
+	my(@photos) = @{(shift)};
+	my $counter = countPhoto();
+	my $photoStrip = "strip_$counter.jpg";
 	
 	my $rc;
 	my $cmd;
 
 	$cmd =
 	"montage -size 1024x680 -geometry 1024x680 -tile 2x -border 2 -bordercolor white "
-	."$thumbnailPath$fotos[0] $thumbnailPath$fotos[1] $thumbnailPath$fotos[2] $thumbnailPath$fotos[3] $photoPath$fotoStrip";
+	."$thumbnailPath$photos[0] $thumbnailPath$photos[1] $thumbnailPath$photos[2] $thumbnailPath$photos[3] $photoPath$photoStrip";
 	
 	$rc = system($cmd);
 	
 	if ($rc eq 0) {
         	# if not error
         	# create thumbail 
-		createThumbnail($fotoStrip);
+		createThumbnail($photoStrip);
 	        # copy the strip to external drive
-	        copyToExternalDrive($fotoStrip);
+	        copyToExternalDrive($photoStrip);
 		# return strip
-        	return $fotoStrip;
+        	return $photoStrip;
 	} else {
         # if error, return error
 		return "general-error.png";
@@ -451,7 +330,37 @@ sub copyToExternalDrive {
 
 }
 
+sub countPhoto {
+	my $param = shift;
+	my $counter;
+	my $file = $appPath.'lib/counter';
+	
+	if (defined $param && $param eq "printer") {
+		$file = $appPath.'lib/print_counter';
+	}
+	
+	#Pruefe ob Counter Datei vorhanden
+	if (!-e $file) {
+		#wenn datei nicht vorhanden, anlegen mit Inhalt "0"
+		open COUNT, "> $file" or die "Cannot write file $file";
+		print COUNT "0"; 
+		close COUNT;
+	}
+	
+	# Zaehlerdatei zum Lesen oeffnen
+	open COUNT, "< $file" or die "Counter file $file not found";
+	$counter = <COUNT>; # Zaehlerstand lesen
+	close COUNT; # Datei schliessen
 
+	$counter++;
+	
+	# Zaehlerdatei zum Schreiben oeffnen
+	open COUNT, "> $file" or die "Cannot write file $file";
+	print COUNT $counter; # aktuellen Zaehlerstand in Datei schreiben
+	close COUNT;
+	
+	return $counter;
+}
 
 
 
