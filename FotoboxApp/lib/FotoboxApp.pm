@@ -18,6 +18,7 @@ $| = 1;
 
 # App routes
 
+my $singlePhoto;
 my @photos;
 my $photosRef = \@photos;
 my $timer = 5;
@@ -27,6 +28,7 @@ my $seriesCount = 0;
 
 get '/' => sub {
     
+    undef $singlePhoto;
     undef $collage;
     $collage = 0;
     undef @photos ;
@@ -41,6 +43,8 @@ get '/' => sub {
 };
 
 get '/new' => sub {
+
+    undef $singlePhoto;
     undef $collage;
     $collage = 0;
     undef @photos ;
@@ -82,7 +86,7 @@ get '/takesinglephoto' => sub {
     my $photo;
         
     $photo = takePicture();
-    $photosRef->[3]=$photo;
+    $singlePhoto=$photo;
     
     redirect '/start';
 
@@ -92,7 +96,7 @@ get '/showsinglephoto' => sub {
     
     template 'fotobox_foto',
         {
-            'foto_filename' => $photosRef->[3],
+            'foto_filename' => $singlePhoto,
             'redirect_uri' => "fotostrip",
             'timer' => $timer,
             'number' => 'blank'
@@ -187,7 +191,7 @@ get '/montage' => sub {
 
 get '/createphotostrip' => sub {
     my $photo;
-    $photo = $photosRef->[3];
+    $photo = $singlePhoto;
     
     if ($collage == 1) {
         $photoStrip = createPhotoStrip($photosRef);
@@ -280,25 +284,25 @@ sub createPhotoStrip {
 	# 4er Fotostreifen erstellen
 	my(@photos) = @{(shift)};
 	my $counter = countPhoto();
-	my $photoStrip = "strip_$counter.jpg";
+	my $newPhotoStrip = "strip_$counter.jpg";
 	
 	my $rc;
 	my $cmd;
 
 	$cmd =
 	"montage -size 1024x680 -geometry 1024x680 -tile 2x -border 2 -bordercolor white "
-	."$thumbnailPath$photos[0] $thumbnailPath$photos[1] $thumbnailPath$photos[2] $thumbnailPath$photos[3] $photoPath$photoStrip";
+	."$thumbnailPath$photos[0] $thumbnailPath$photos[1] $thumbnailPath$photos[2] $thumbnailPath$photos[3] $photoPath$newPhotoStrip";
 	
 	$rc = system($cmd);
 	
 	if ($rc eq 0) {
         	# if not error
         	# create thumbail 
-            createThumbnail($photoStrip);
+            createThumbnail($newPhotoStrip);
 	        # copy the strip to external drive
-	        copyToExternalDrive($photoStrip);
+	        copyToExternalDrive($newPhotoStrip);
             # return strip
-        	return $photoStrip;
+        	return $newPhotoStrip;
 	} else {
         # if error, return error image
 		return "general-error.png";
