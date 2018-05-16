@@ -171,20 +171,19 @@ get '/montage' => sub {
 # Ansicht des letzten Fotos
 
 get '/createphotostrip' => sub {
-    my $photo;
-    $photo = $single_photo;
 
-    if ($collage == 1) {
+  if ($do_stuff_once == 1) {
         $photo_strip = createPhotoStrip($photos_ref);
-    } else {
-        $photo_strip = $photo;
+        $do_stuff_once = 0;
     }
-
    redirect '/showphotostrip';
 
 };
 
-get '/showfotostrip' => sub {
+get '/showphotostrip' => sub {
+
+    $do_stuff_once = 1;
+
     set 'layout' => 'fotobox-main';
     template 'fotobox_fotostrip',
     {
