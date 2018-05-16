@@ -114,7 +114,7 @@ get '/takephotoseries' => sub {
     if ($do_stuff_once == 1) {
       $photo = takePicture();
       $photos_ref->[$series_count]=$photo;
-      $do_stuff_once == 0;
+      $do_stuff_once = 0;
     }
 
     if ($photos_ref->[$series_count] =~ m/error/) {
