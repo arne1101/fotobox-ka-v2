@@ -134,28 +134,22 @@ get '/showphotoseries' => sub {
              redirect '/single?foto='.$photos_ref->[0];
     }
 
-
-
-    if ($series_count <= 2) {
-        my $number = $series_count + 1;
-        my $number_string = $number."_4";
-        template 'fotobox_foto',
-            {
-                'foto_filename' => $photos_ref->[$series_count],
-                'redirect_uri' => "takephotoseries",
-                'timer' => $timer,
-                'number' => $number_string
-            };
+    my $redirect_uri = "takephotoseries";
+    if ($series_count == 3) {
+      $redirect_uri = "montage";
     }
-    elsif ($series_count == 3) {
-        template 'fotobox_foto',
-            {
-                'foto_filename' => $photos_ref->[$series_count],
-                'redirect_uri' => "montage",
-                'timer' => $timer,
-                'number' => '4_4'
-            };
-    }
+
+    my $number = $series_count + 1;
+    my $number_string = $number."_4";
+
+    set 'layout' => 'fotobox-main';
+    template 'fotobox_foto',
+        {
+            'foto_filename' => $photos_ref->[$series_count],
+            'redirect_uri' => $redirect_uri,
+            'timer' => $timer,
+            'number' => $number_string
+        };
 
     $series_count++;
 
