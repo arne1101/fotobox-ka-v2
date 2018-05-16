@@ -135,7 +135,7 @@ get '/showphotoseries' => sub {
     }
 
     my $redirect_uri = "takephotoseries";
-    if ($series_count == 3) {
+    if ($series_count == 4) {
       $redirect_uri = "montage";
     }
 
