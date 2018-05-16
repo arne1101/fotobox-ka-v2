@@ -234,8 +234,8 @@ sub takePicture {
 
 
 
-        #pruefe ob kamera angeschlossen (return enhaelt USB)
-        if ($return =~ m/usb:/) {
+      #pruefe ob kamera angeschlossen (return enhaelt USB)
+      if ($return =~ m/usb:/) {
 
 			# Bildernummer holen / erstellen
 			$counter = countPhoto();
@@ -256,7 +256,7 @@ sub takePicture {
             # Save photo to an external Deive
             # This might slow down the time from capture to viewing the picture, maybe I should make this async
             # Copy photo to external Drive
-            copyToExternalDrive($filename);
+          #  copyToExternalDrive($filename);
 		        ### ERGEBNIS WIRD HIER NICHT GEFRUEFT
 			}
         } else {
