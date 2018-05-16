@@ -7,32 +7,32 @@ use Dancer2;
 #use FotoboxApp::FotoboxGallery;
 
 
-my $appPath = '/var/www/FotoboxApp/';
-my $photoPath = '/var/www/FotoboxApp/public/gallery/';
-my $thumbnailPath = $photoPath.'thumbs/';
-my $externalDrive = '/media/usb/';
-my $tempPath = '/var/tmp/';
+my $app_path = '/var/www/FotoboxApp/';
+my $photo_path = '/var/www/FotoboxApp/public/gallery/';
+my $thumbnail_path = $photo_path.'thumbs/';
+my $external_drive = '/media/usb/';
+my $temp_path = '/var/tmp/';
 
 # App routes
 
-my $singlePhoto;
+my $single_photo;
 my @photos;
-my $photosRef = \@photos;
+my $photos_ref = \@photos;
 my $timer = 5;
-my $photoStrip;
+my $photo_strip;
 my $collage = 0;
-my $seriesCount = 0;
+my $series_count = 0;
 my $do_stuff_once = 1;
 
 get '/' => sub {
 
-    undef $singlePhoto;
+    undef $single_photo;
     undef $collage;
     $collage = 0;
     undef @photos ;
-    $photosRef = \@photos;
-    undef $photoStrip;
-    $seriesCount = 0;
+    $photos_ref = \@photos;
+    undef $photo_strip;
+    $series_count = 0;
     $do_stuff_once = 1;
 
     set 'layout' => 'fotobox-main';
@@ -43,13 +43,13 @@ get '/' => sub {
 
 get '/new' => sub {
 
-    undef $singlePhoto;
+    undef $single_photo;
     undef $collage;
     $collage = 0;
     undef @photos ;
-    $photosRef = \@photos;
-    undef $photoStrip;
-    $seriesCount = 0;
+    $photos_ref = \@photos;
+    undef $photo_strip;
+    $series_count = 0;
     $do_stuff_once = 1;
 
 
@@ -87,7 +87,7 @@ get '/takesinglephoto' => sub {
 
     if ($do_stuff_once == 1) {
       $photo = takePicture();
-      $singlePhoto=$photo;
+      $single_photo=$photo;
       $do_stuff_once = 0;
     }
 
@@ -97,9 +97,9 @@ get '/takesinglephoto' => sub {
 
 get '/showsinglephoto' => sub {
 
-    template 'fotobox_foto',
+    template 'fotobox_fotostrip',
         {
-            'foto_filename' => $singlePhoto,
+            'foto_filename' => $single_photo,
             'redirect_uri' => "fotostrip",
             'timer' => $timer,
             'number' => 'blank'
@@ -111,10 +111,10 @@ get '/takephotoseries' => sub {
     my $photo;
 
     $photo = takePicture();
-    $photosRef->[$seriesCount]=$photo;
+    $photos_ref->[$series_count]=$photo;
 
-    if ($photosRef->[$seriesCount] =~ m/error/) {
-             redirect '/single?foto='.$photosRef->[0];
+    if ($photos_ref->[$series_count] =~ m/error/) {
+             redirect '/single?foto='.$photos_ref->[0];
     }
 
     redirect '/showphotoseries';
@@ -124,53 +124,53 @@ get '/showphotoseries' => sub {
     my $photo;
 
     $photo = takePicture();
-    $photosRef->[$seriesCount]=$photo;
+    $photos_ref->[$series_count]=$photo;
 
 
-    if ($photosRef->[$seriesCount] =~ m/error/) {
-             redirect '/single?foto='.$photosRef->[0];
+    if ($photos_ref->[$series_count] =~ m/error/) {
+             redirect '/single?foto='.$photos_ref->[0];
     }
 
     set 'layout' => 'fotobox-main';
 
-    if ($seriesCount == 0) {
+    if ($series_count == 0) {
         template 'fotobox_foto',
             {
-                'foto_filename' => $photosRef->[$seriesCount],
+                'foto_filename' => $photos_ref->[$series_count],
                 'redirect_uri' => "takephotoseries",
                 'timer' => $timer,
                 'number' => '1_4'
             };
     }
-    elsif ($seriesCount == 1) {
+    elsif ($series_count == 1) {
         template 'fotobox_foto',
             {
-                'foto_filename' => $photosRef->[$seriesCount],
+                'foto_filename' => $photos_ref->[$series_count],
                 'redirect_uri' => "takephotoseries",
                 'timer' => $timer,
                 'number' => '´2_4'
             };
     }
-    elsif ($seriesCount == 2) {
+    elsif ($series_count == 2) {
         template 'fotobox_foto',
             {
-                'foto_filename' => $photosRef->[$seriesCount],
+                'foto_filename' => $photos_ref->[$series_count],
                 'redirect_uri' => "takephotoseries",
                 'timer' => $timer,
                 'number' => '´3_4'
             };
     }
-    elsif ($seriesCount == 3) {
+    elsif ($series_count == 3) {
         template 'fotobox_foto',
             {
-                'foto_filename' => $photosRef->[$seriesCount],
+                'foto_filename' => $photos_ref->[$series_count],
                 'redirect_uri' => "montage",
                 'timer' => $timer,
                 'number' => '´4_4'
             };
     }
 
-    $seriesCount++;
+    $series_count++;
 
 };
 
@@ -180,10 +180,10 @@ get '/montage' => sub {
     set 'layout' => 'fotobox-main';
     template 'fotobox_montage',
     {
-        'foto_filename1' => $photosRef->[0],
-        'foto_filename2' => $photosRef->[1],
-        'foto_filename3' => $photosRef->[2],
-        'foto_filename4' => $photosRef->[3],
+        'foto_filename1' => $photos_ref->[0],
+        'foto_filename2' => $photos_ref->[1],
+        'foto_filename3' => $photos_ref->[2],
+        'foto_filename4' => $photos_ref->[3],
         'redirect_uri' => "createphotostrip",
         'timer' => $timer
     };
@@ -194,12 +194,12 @@ get '/montage' => sub {
 
 get '/createphotostrip' => sub {
     my $photo;
-    $photo = $singlePhoto;
+    $photo = $single_photo;
 
     if ($collage == 1) {
-        $photoStrip = createPhotoStrip($photosRef);
+        $photo_strip = createPhotoStrip($photos_ref);
     } else {
-        $photoStrip = $photo;
+        $photo_strip = $photo;
     }
 
    redirect '/showphotostrip';
@@ -210,7 +210,7 @@ get '/showfotostrip' => sub {
     set 'layout' => 'fotobox-main';
     template 'fotobox_fotostrip',
     {
-        'foto_filename' => $photoStrip
+        'foto_filename' => $photo_strip
     };
 };
 
@@ -218,13 +218,13 @@ get '/showfotostrip' => sub {
 
 sub getPhotoPath {
 	# Path for photos
-	return $photoPath;
+	return $photo_path;
 
 	}
 
 sub getThumbnailPath {
 	# Path for Thumbnails
-	return $thumbnailPath;
+	return $thumbnail_path;
 }
 
 sub takePicture {
@@ -249,10 +249,10 @@ sub takePicture {
 			$filename = "foto_$counter.jpg";
 
 			# Foto aufnehmen und herunterladen
-			my $return = `gphoto2 --capture-image-and-download --filename=$photoPath$filename`;
+			my $return = `gphoto2 --capture-image-and-download --filename=$photo_path$filename`;
 
 			# Pruefe ob Foto erfolgreich gespeichert wurde
-			if (!-e $photoPath.$filename) {
+			if (!-e $photo_path.$filename) {
 				# wenn kein Foto gespeichert, dann Fehlerbild zurueck geben
 				return "no-photo-error.png";
 			}
@@ -276,7 +276,7 @@ sub createThumbnail {
 	    # Thumbnailbild erstellen
         my $filename = shift;
         # epeg befehl zum verkleinern
-        my $cmd = 'sudo epeg --width=1072 --height=712 '."$photoPath"."$filename".' '."$thumbnailPath"."$filename";
+        my $cmd = 'sudo epeg --width=1072 --height=712 '."$photo_path"."$filename".' '."$thumbnail_path"."$filename";
         # befehl ausfuehren und ergebnis zurueck liefern, ergebnis wird derzeit nicht ueberprueft
         my $rc = system($cmd);
         return $rc;
@@ -294,7 +294,7 @@ sub createPhotoStrip {
 
 	$cmd =
 	"montage -size 1024x680 -geometry 1024x680 -tile 2x -border 2 -bordercolor white "
-	."$thumbnailPath$photos[0] $thumbnailPath$photos[1] $thumbnailPath$photos[2] $thumbnailPath$photos[3] $photoPath$newPhotoStrip";
+	."$thumbnail_path$photos[0] $thumbnail_path$photos[1] $thumbnail_path$photos[2] $thumbnail_path$photos[3] $photo_path$newPhotoStrip";
 
 	$rc = system($cmd);
 
@@ -318,7 +318,7 @@ sub copyToExternalDrive {
 	my $file = shift;
 
     # command to copy the given file to the external Drive
-    my $cmd = "sudo cp $photoPath$file $externalDrive";
+    my $cmd = "sudo cp $photo_path$file $external_drive";
 
 	# run command
     my $rc = system($cmd);
@@ -331,10 +331,10 @@ sub copyToExternalDrive {
 sub countPhoto {
 	my $param = shift;
 	my $counter;
-	my $file = $appPath.'lib/counter';
+	my $file = $app_path.'lib/counter';
 
 	if (defined $param && $param eq "printer") {
-		$file = $appPath.'lib/print_counter';
+		$file = $app_path.'lib/print_counter';
 	}
 
 	#Pruefe ob Counter Datei vorhanden
