@@ -192,7 +192,7 @@ get '/createphotostrip' => sub {
 
     if ($collage == 1) {
         $photoStrip = createPhotoStrip($photosRef);
-    } else ($collage == 0) {
+    } else {
         $photoStrip = $photo;
     }
 
