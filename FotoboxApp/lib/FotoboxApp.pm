@@ -119,7 +119,7 @@ get '/takephotoseries' => sub {
     }
 
     if ($photos_ref->[$series_count] =~ m/error/) {
-             redirect '/single?foto='.$photos_ref->[0];
+             redirect '/single?foto='.$photos_ref->[$series_count];
     }
 
     redirect '/showphotoseries';
@@ -131,7 +131,7 @@ get '/showphotoseries' => sub {
     $do_stuff_once = 1;
 
     if ($photos_ref->[$series_count] =~ m/error/) {
-             redirect '/single?foto='.$photos_ref->[0];
+             redirect '/single?foto='.$photos_ref->[$series_count];
     }
 
     my $redirect_uri = "takephotoseries";
@@ -151,7 +151,7 @@ get '/showphotoseries' => sub {
             'number' => $number_string
         };
 
-    $series_count++;
+  #  $series_count++;
 
 };
 
@@ -214,7 +214,7 @@ sub takePicture {
 	my $return;
 	my $counter;
 	my $filename;
-	my $thumbExec;
+	my $thumb_execution_return;
 
 	# Pruefe ob Kamera angeschlossen. Return muss "usb:" im Text haben
 	$return =  `gphoto2 --auto-detect`;
@@ -239,7 +239,7 @@ sub takePicture {
 			}
 			else {
 				    # Thumbnail erstellen wenn Foto erfolgreich aufgenommen wurde
-				    $thumbExec = createThumbnail($filename);
+				    $thumb_execution_return = createThumbnail($filename);
             # Save photo to an external Deive
             # This might slow down the time from capture to viewing the picture, maybe I should make this async
             # Copy photo to external Drive
