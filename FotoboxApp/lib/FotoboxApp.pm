@@ -136,31 +136,15 @@ get '/showphotoseries' => sub {
 
 
 
-    if ($series_count == 0) {
+    if ($series_count <= 2) {
+        my $number = $series_count + 1;
+        my $number_string = $number."_4";
         template 'fotobox_foto',
             {
                 'foto_filename' => $photos_ref->[$series_count],
                 'redirect_uri' => "takephotoseries",
                 'timer' => $timer,
-                'number' => '1_4'
-            };
-    }
-    elsif ($series_count == 1) {
-        template 'fotobox_foto',
-            {
-                'foto_filename' => $photos_ref->[$series_count],
-                'redirect_uri' => "takephotoseries",
-                'timer' => $timer,
-                'number' => '´2_4'
-            };
-    }
-    elsif ($series_count == 2) {
-        template 'fotobox_foto',
-            {
-                'foto_filename' => $photos_ref->[$series_count],
-                'redirect_uri' => "takephotoseries",
-                'timer' => $timer,
-                'number' => '´3_4'
+                'number' => $number_string
             };
     }
     elsif ($series_count == 3) {
@@ -169,7 +153,7 @@ get '/showphotoseries' => sub {
                 'foto_filename' => $photos_ref->[$series_count],
                 'redirect_uri' => "montage",
                 'timer' => $timer,
-                'number' => '´4_4'
+                'number' => '4_4'
             };
     }
 
