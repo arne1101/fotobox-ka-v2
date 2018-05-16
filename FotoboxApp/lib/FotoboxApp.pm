@@ -400,7 +400,7 @@ get '/random' => sub {
     closedir DIR;
 
 
-        my $randomelement = $gallery_html[rand @gallery];
+    my $randomelement = [rand @gallery];
 
 
     set 'layout' => 'fotobox-main';
