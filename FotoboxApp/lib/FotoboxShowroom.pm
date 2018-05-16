@@ -1,12 +1,12 @@
 # Showroom fÅ¸r die zuletzt gemachten Fotos zum Verkauf
 get '/showroom' => sub {
-    
+
     my $dir = $fotobox->getThumbnailPath();
     my $thDir = '/gallery/thumbs/';
 
     my @galleryFoto;
     my $gal;
-        
+
     opendir DIR, $dir or die $!;
         while(my $entry = readdir DIR ){
             if ($OptionBranding == 1) {
@@ -20,11 +20,11 @@ get '/showroom' => sub {
             }
         }
     closedir DIR;
-        
+
     # Schwarzsche Transformation zum sortieren nach Zeit
     # name -> [mdate,name] -> sort() -> name
     @galleryFoto=map{$_->[1]}sort{$a->[0] <=> $b->[0]}map{[-M "$dir/$_",$_]}@galleryFoto;
-    
+
     $gal = '<ul class="small-block-grid-3">'."\n";
     my $i = 1;
     foreach (@galleryFoto) {
@@ -35,10 +35,10 @@ get '/showroom' => sub {
         }
         $i++;
      }
-        
-        
+
+
     $gal = $gal.'</ul>'."\n";
-     
+
     set 'layout' => 'fotobox-main';
     template 'fotobox_showroom',
     {
@@ -50,16 +50,16 @@ get '/showroom' => sub {
 
 # Kasse
 get '/checkout' => sub {
-    
+
     my $dir = $fotobox->getThumbnailPath();
     my $thDir = '/gallery/thumbs/';
 
     my @galleryFoto;
     my $gal;
-    
-    
+
+
     my $header = '<center><a href="checkout">neu laden</a></center>';
-    
+
     opendir DIR, $dir or die $!;
         while(my $entry = readdir DIR ){
             if ($OptionBranding == 1) {
@@ -73,11 +73,11 @@ get '/checkout' => sub {
             }
         }
     closedir DIR;
-        
+
     # Schwarzsche Transformation zum sortieren nach Zeit
     # name -> [mdate,name] -> sort() -> name
     @galleryFoto=map{$_->[1]}sort{$a->[0] <=> $b->[0]}map{[-M "$dir/$_",$_]}@galleryFoto;
-    
+
     $gal = '<ul class="small-block-grid-3">'."\n";
     my $i = 1;
     foreach (@galleryFoto) {
@@ -88,9 +88,9 @@ get '/checkout' => sub {
         }
         $i++;
      }
-        
+
     $gal = $gal.'</ul>'."\n";
-     
+
     set 'layout' => 'fotobox-main';
     template 'fotobox_showroom',
     {
@@ -100,3 +100,5 @@ get '/checkout' => sub {
         'redirect' => 'checkout'
     };
 };
+
+true;

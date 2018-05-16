@@ -7,8 +7,8 @@ my $mail;
 
 get '/mail' => sub {
     undef $mail;
-    $mail  = params->{foto};    
-   
+    $mail  = params->{foto};
+
     set 'layout' => 'fotobox-main';
     template 'fotobox_mail',
     {
@@ -17,27 +17,27 @@ get '/mail' => sub {
         'foto_filename' => $mail,
         'code' => ''
     };
-    
+
 };
 
 get '/mail/send/' => sub {
-    
+
     my $to = params->{mail};
     $to =~ tr/[%40]/[@]/;
     my $subject = "Hier kommt dein Foto von fotobox-ka.de";
     my $message ="www.fotobox-ka.de";
     my $foto = $mail;
-    
-    
+
+
     $fotobox->sendMail($to,$subject,$message,$foto);
-    
+
     set 'layout' => 'fotobox-main';
     template 'fotobox_mail',
     {
         'message' => 'Viel Spa&szlig; mit deinem Foto!',
         'text' => 'E-Mail wurde an '.$to.' verschickt. ',
         'warning' =>'Bitte schaue auch in deinem SPAM-Ordner nach.',
-        'foto_filename' => $mail,  
+        'foto_filename' => $mail,
     };
 };
 
@@ -49,9 +49,9 @@ sub sendMail {
 	my $subject = shift;
 	my $message = shift;
 	my $foto = shift;
-	
+
 	my $attachment = $photoPath.$foto;
-	
+
 	my $sender = new Mail::Sender {
                 smtp => 'fotobox.local',
 				port => '25',
@@ -61,8 +61,8 @@ sub sendMail {
                 authpwd => '...',
                 on_errors => 'die',
         }  or die "Can't create the Mail::Sender object: $Mail::Sender::Error\n";
-	
-	
+
+
 	 $sender->OpenMultipart({
 		  to => "$to",
                   subject  => "$subject",

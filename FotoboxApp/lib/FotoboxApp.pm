@@ -12,8 +12,6 @@ my $thumbnailPath = $photoPath.'thumbs/';
 my $externalDrive = '/media/usb/';
 my $tempPath = '/var/tmp/';
 
-
-
 $| = 1;
 
 # App routes
@@ -357,4 +355,4 @@ sub countPhoto {
 	return $counter;
 }
 
-dance;
+true;

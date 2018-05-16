@@ -1,10 +1,10 @@
 package FotoboxApp;
 use Dancer2;
-use List::MoreUtils 'first_index'; 
+use List::MoreUtils 'first_index';
 
 # Gallerie
 get '/gallery' => sub {
-    
+
     my $dir = $fotobox->getThumbnailPath();
     my $thDir = '/gallery/thumbs/';
 
@@ -26,27 +26,27 @@ get '/gallery' => sub {
             }
         }
     closedir DIR;
-    
 
-        
+
+
     # Schwarzsche Transformation zum sortieren nach Zeit
     # name -> [mdate,name] -> sort() -> name
     @galleryFoto=map{$_->[1]}sort{$a->[0] <=> $b->[0]}map{[-M "$dir/$_",$_]}@galleryFoto;
-    
-    
+
+
         $gal = '<div class="galleryWide">'."\n";
         my $i = 1;
-        foreach (@galleryFoto) { 
+        foreach (@galleryFoto) {
                 $gal = $gal.'<a class="th margin-10-top margin-30-right" href="single?foto='.$_.'"><img class="gallery-thumb" src="'.$thDir.$_.'"></a>';
             if ($i == 50) {
                 last;
             }
             $i++;
-            
+
          }
-        
+
         $gal = $gal.'</div>'."\n";
-     
+
     set 'layout' => 'fotobox-main';
     template 'fotobox_gallery',
     {
@@ -56,11 +56,11 @@ get '/gallery' => sub {
 
 # Zufallsbild
 get '/random' => sub {
-    
+
     my $dir = $fotobox->getPhotoPath();
     my $thDir = '/gallery/thumbs/';
     my @gallery;
-        
+
     opendir DIR, $dir or die $!;
     while(my $entry = readdir DIR ){
         if ($OptionBranding == 1) {
@@ -74,11 +74,11 @@ get '/random' => sub {
         }
     }
     closedir DIR;
-    
-      
+
+
         my $randomelement = $gallery[rand @gallery];
-       
-     
+
+
     set 'layout' => 'fotobox-main';
     template 'fotobox_random',
     {
@@ -88,16 +88,16 @@ get '/random' => sub {
 
 
 get '/single' => sub {
-    
+
     my $foto = params->{foto};
     my $next;
     my $last;
-    
+
     my $dir = $fotobox->getThumbnailPath();
     my $thDir = '/gallery/thumbs/';
     my @galleryFoto;
     my $gal;
-    
+
     opendir DIR, $dir or die $!;
         while(my $entry = readdir DIR ){
             if ($OptionBranding == 1) {
@@ -111,14 +111,14 @@ get '/single' => sub {
             }
         }
     closedir DIR;
-    
+
     # Schwarzsche Transformation zum sortieren nach Zeit
     # name -> [mdate,name] -> sort() -> name
     @galleryFoto=map{$_->[1]}sort{$a->[0] <=> $b->[0]}map{[-M "$dir/$_",$_]}@galleryFoto;
-    
+
     # Suche Foto und gib index zurueck
     my $i = first_index { /$foto/ } @galleryFoto;
-    
+
     # Pruefe ob naechstes Foto (=index +1) vorhanden
     if (defined $galleryFoto[$i+1]) {
         # true = setze $next auf naechstes Foto
@@ -127,7 +127,7 @@ get '/single' => sub {
         # false - $next = aktuelles foto
         $next = $foto;
     }
-    
+
     #gleiches mit vorherigem foto
     if ($i == 0) {
         #wenn 1. Foto, dann kein Vorgaenger
@@ -144,6 +144,8 @@ get '/single' => sub {
         'foto_filename' => $foto,
         'next' => $next,
         'last' => $last
-        
+
     };
 };
+
+true;
