@@ -98,6 +98,7 @@ get '/takesinglephoto' => sub {
 get '/showsinglephoto' => sub {
 
     $do_stuff_once = 1;
+    set 'layout' => 'fotobox-main';
     template 'fotobox_fotostrip',
         {
             'foto_filename' => $single_photo,
@@ -133,7 +134,7 @@ get '/showphotoseries' => sub {
              redirect '/single?foto='.$photos_ref->[0];
     }
 
-    set 'layout' => 'fotobox-main';
+
 
     if ($series_count == 0) {
         template 'fotobox_foto',
