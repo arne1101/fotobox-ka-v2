@@ -27,7 +27,7 @@ my $collage = 0;
 my $seriesCount = 0;
 
 get '/' => sub {
-    
+
     undef $singlePhoto;
     undef $collage;
     $collage = 0;
@@ -37,9 +37,9 @@ get '/' => sub {
     $seriesCount = 0;
 
     set 'layout' => 'fotobox-main';
-    template 'fotobox_index';    
+    template 'fotobox_index';
 
-    
+
 };
 
 get '/new' => sub {
@@ -52,15 +52,15 @@ get '/new' => sub {
     undef $photoStrip;
     $seriesCount = 0;
 
-    
+
     my $strip = params->{strip};
-    
+
     if ($strip == 1) {
          redirect '/strip';
     } else {
          redirect '/start';
     }
-    
+
 };
 
 get '/start' => sub {
@@ -82,18 +82,18 @@ get '/strip' => sub {
 
 
 get '/takesinglephoto' => sub {
-    
+
     my $photo;
-        
+
     $photo = takePicture();
     $singlePhoto=$photo;
-    
+
     redirect '/start';
 
 };
 
 get '/showsinglephoto' => sub {
-    
+
     template 'fotobox_foto',
         {
             'foto_filename' => $singlePhoto,
@@ -106,30 +106,30 @@ get '/showsinglephoto' => sub {
 
 get '/takephotoseries' => sub {
     my $photo;
-   
+
     $photo = takePicture();
     $photosRef->[$seriesCount]=$photo;
-    
+
     if ($photosRef->[$seriesCount] =~ m/error/) {
              redirect '/single?foto='.$photosRef->[0];
     }
-    
+
     redirect '/showphotoseries';
 };
 
 get '/showphotoseries' => sub {
     my $photo;
-   
+
     $photo = takePicture();
     $photosRef->[$seriesCount]=$photo;
 
-    
+
     if ($photosRef->[$seriesCount] =~ m/error/) {
              redirect '/single?foto='.$photosRef->[0];
     }
-    
+
     set 'layout' => 'fotobox-main';
-    
+
     if ($seriesCount == 0) {
         template 'fotobox_foto',
             {
@@ -138,7 +138,7 @@ get '/showphotoseries' => sub {
                 'timer' => $timer,
                 'number' => '1_4'
             };
-    } 
+    }
     elsif ($seriesCount == 1) {
         template 'fotobox_foto',
             {
@@ -147,7 +147,7 @@ get '/showphotoseries' => sub {
                 'timer' => $timer,
                 'number' => '´2_4'
             };
-    }    
+    }
     elsif ($seriesCount == 2) {
         template 'fotobox_foto',
             {
@@ -156,7 +156,7 @@ get '/showphotoseries' => sub {
                 'timer' => $timer,
                 'number' => '´3_4'
             };
-    }    
+    }
     elsif ($seriesCount == 3) {
         template 'fotobox_foto',
             {
@@ -168,12 +168,12 @@ get '/showphotoseries' => sub {
     }
 
     $seriesCount++;
-    
+
 };
 
 # Fake-Ansicht fŸr 4er Foto
 get '/montage' => sub {
-    
+
     set 'layout' => 'fotobox-main';
     template 'fotobox_montage',
     {
@@ -184,7 +184,7 @@ get '/montage' => sub {
         'redirect_uri' => "createphotostrip",
         'timer' => $timer
     };
-    
+
 };
 
 # Ansicht des letzten Fotos
@@ -192,15 +192,15 @@ get '/montage' => sub {
 get '/createphotostrip' => sub {
     my $photo;
     $photo = $singlePhoto;
-    
+
     if ($collage == 1) {
         $photoStrip = createPhotoStrip($photosRef);
     } else ($collage == 0) {
-        $photoStrip = $photo;                   
-    } 
-    
+        $photoStrip = $photo;
+    }
+
    redirect '/showphotostrip';
-    
+
 };
 
 get '/showfotostrip' => sub {
@@ -211,17 +211,17 @@ get '/showfotostrip' => sub {
     };
 };
 
-#Subroutines 
+#Subroutines
 
 sub getPhotoPath {
 	# Path for photos
 	return $photoPath;
-	
+
 	}
 
 sub getThumbnailPath {
 	# Path for Thumbnails
-	return $thumbnailPath;	
+	return $thumbnailPath;
 }
 
 sub takePicture {
@@ -231,26 +231,26 @@ sub takePicture {
 	my $counter;
 	my $filename;
 	my $thumbExec;
-	
+
 	# Pruefe ob Kamera angeschlossen. Return muss "usb:" im Text haben
 	$return =  `gphoto2 --auto-detect`;
-    
-	
-	
+
+
+
         #pruefe ob kamera angeschlossen (return enhaelt USB)
         if ($return =~ m/usb:/) {
-			
+
 			# Bildernummer holen / erstellen
 			$counter = countPhoto();
 			# Dateiname bestimmen
 			$filename = "foto_$counter.jpg";
-			
+
 			# Foto aufnehmen und herunterladen
 			my $return = `gphoto2 --capture-image-and-download --filename=$photoPath$filename`;
-			
+
 			# Pruefe ob Foto erfolgreich gespeichert wurde
 			if (!-e $photoPath.$filename) {
-				# wenn kein Foto gespeichert, dann Fehlerbild zurueck geben 
+				# wenn kein Foto gespeichert, dann Fehlerbild zurueck geben
 				return "no-photo-error.png";
 			}
 			else {
@@ -275,7 +275,7 @@ sub createThumbnail {
         # epeg befehl zum verkleinern
         my $cmd = 'sudo epeg --width=1072 --height=712 '."$photoPath"."$filename".' '."$thumbnailPath"."$filename";
         # befehl ausfuehren und ergebnis zurueck liefern, ergebnis wird derzeit nicht ueberprueft
-        my $rc = system($cmd);       
+        my $rc = system($cmd);
         return $rc;
 }
 
@@ -285,19 +285,19 @@ sub createPhotoStrip {
 	my(@photos) = @{(shift)};
 	my $counter = countPhoto();
 	my $newPhotoStrip = "strip_$counter.jpg";
-	
+
 	my $rc;
 	my $cmd;
 
 	$cmd =
 	"montage -size 1024x680 -geometry 1024x680 -tile 2x -border 2 -bordercolor white "
 	."$thumbnailPath$photos[0] $thumbnailPath$photos[1] $thumbnailPath$photos[2] $thumbnailPath$photos[3] $photoPath$newPhotoStrip";
-	
+
 	$rc = system($cmd);
-	
+
 	if ($rc eq 0) {
         	# if not error
-        	# create thumbail 
+        	# create thumbail
             createThumbnail($newPhotoStrip);
 	        # copy the strip to external drive
 	        copyToExternalDrive($newPhotoStrip);
@@ -307,18 +307,18 @@ sub createPhotoStrip {
         # if error, return error image
 		return "general-error.png";
 	}
-	
-	
+
+
 }
 
 sub copyToExternalDrive {
 	my $file = shift;
-    
+
     # command to copy the given file to the external Drive
     my $cmd = "sudo cp $photoPath$file $externalDrive";
-    
+
 	# run command
-    my $rc = system($cmd);     
+    my $rc = system($cmd);
     if ($rc != 0) {
 		die "$cmd /n $rc";
 	}
@@ -329,35 +329,32 @@ sub countPhoto {
 	my $param = shift;
 	my $counter;
 	my $file = $appPath.'lib/counter';
-	
+
 	if (defined $param && $param eq "printer") {
 		$file = $appPath.'lib/print_counter';
 	}
-	
+
 	#Pruefe ob Counter Datei vorhanden
 	if (!-e $file) {
 		#wenn datei nicht vorhanden, anlegen mit Inhalt "0"
 		open COUNT, "> $file" or die "Cannot write file $file";
-		print COUNT "0"; 
+		print COUNT "0";
 		close COUNT;
 	}
-	
+
 	# Zaehlerdatei zum Lesen oeffnen
 	open COUNT, "< $file" or die "Counter file $file not found";
 	$counter = <COUNT>; # Zaehlerstand lesen
 	close COUNT; # Datei schliessen
 
 	$counter++;
-	
+
 	# Zaehlerdatei zum Schreiben oeffnen
 	open COUNT, "> $file" or die "Cannot write file $file";
 	print COUNT $counter; # aktuellen Zaehlerstand in Datei schreiben
 	close COUNT;
-	
+
 	return $counter;
 }
 
-
-
-
-true;
+dance;
