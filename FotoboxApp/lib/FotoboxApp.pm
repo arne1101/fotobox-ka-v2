@@ -1,9 +1,10 @@
 # Created by https://github.com/arne1101
+$| = 1;
 
 package FotoboxApp;
 use Dancer2;
-use FotoboxApp::FotoboxMail;
-use FotoboxApp::FotoboxGallery;
+#use FotoboxApp::FotoboxMail;
+#use FotoboxApp::FotoboxGallery;
 
 
 my $appPath = '/var/www/FotoboxApp/';
@@ -11,8 +12,6 @@ my $photoPath = '/var/www/FotoboxApp/public/gallery/';
 my $thumbnailPath = $photoPath.'thumbs/';
 my $externalDrive = '/media/usb/';
 my $tempPath = '/var/tmp/';
-
-$| = 1;
 
 # App routes
 
