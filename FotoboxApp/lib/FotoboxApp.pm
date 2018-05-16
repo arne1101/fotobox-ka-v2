@@ -22,6 +22,7 @@ my $timer = 5;
 my $photoStrip;
 my $collage = 0;
 my $seriesCount = 0;
+my $do_stuff_once = 1;
 
 get '/' => sub {
 
@@ -32,6 +33,7 @@ get '/' => sub {
     $photosRef = \@photos;
     undef $photoStrip;
     $seriesCount = 0;
+    $do_stuff_once = 1;
 
     set 'layout' => 'fotobox-main';
     template 'fotobox_index';
@@ -48,6 +50,7 @@ get '/new' => sub {
     $photosRef = \@photos;
     undef $photoStrip;
     $seriesCount = 0;
+    $do_stuff_once = 1;
 
 
     my $strip = params->{strip};
@@ -82,8 +85,11 @@ get '/takesinglephoto' => sub {
 
     my $photo;
 
-    $photo = takePicture();
-    $singlePhoto=$photo;
+    if ($do_stuff_once == 1) {
+      $photo = takePicture();
+      $singlePhoto=$photo;
+      $do_stuff_once = 0;
+    }
 
     redirect '/showsinglephoto';
 
@@ -256,7 +262,7 @@ sub takePicture {
             # Save photo to an external Deive
             # This might slow down the time from capture to viewing the picture, maybe I should make this async
             # Copy photo to external Drive
-          #  copyToExternalDrive($filename);
+            copyToExternalDrive($filename);
 		        ### ERGEBNIS WIRD HIER NICHT GEFRUEFT
 			}
         } else {
