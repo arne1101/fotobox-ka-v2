@@ -44,14 +44,14 @@ document.location.href = noddy.href;
           loadPage(e.target.href);
           })
      }
-     
+
 function loadPage(url){
    $('#viewport').load(url + '#viewport', hijack);
-}     
-    
-    
-</script>        
-    
+}
+
+
+</script>
+
 <% content %>
 
 <script src="<% request.uri_base %>/js/jquery.js"></script>
@@ -74,9 +74,9 @@ function loadPage(url){
         (function ($) {
             $( document ).on( "idle.idleTimer", function(event, elem, obj){
 		     location.href="/";
-            });            
-            $.idleTimer(10000);
-            
+            });
+            $.idleTimer(20000);
+
         })(jQuery);
 </script>
 </body>
