@@ -439,9 +439,9 @@ get '/single' => sub {
     my $i = first_index { /$foto/ } @gallery_foto;
 
     # Pruefe ob naechstes Foto (=index +1) vorhanden
-    if (defined $gallery_html.$gallery_foto[$i+1]) {
+    if (defined $gallery_foto[$i+1]) {
         # true = setze $next auf naechstes Foto
-        $next = $gallery_html.$gallery_foto[$i+1];
+        $next = $gallery_foto[$i+1];
     } else {
         # false - $next = aktuelles foto
         $next = $foto;
@@ -451,8 +451,8 @@ get '/single' => sub {
     if ($i == 0) {
         #wenn 1. Foto, dann kein Vorgaenger
         $last = $foto;
-    } elsif (defined $gallery_htmlgallery_foto[$i-1]) {
-        $last = $gallery_htmlgallery_foto[$i-1];
+    } elsif (defined $gallery_foto[$i-1]) {
+        $last = $gallery_foto[$i-1];
     } else {
         $last = $foto;
     }
