@@ -4,7 +4,7 @@ $| = 1;
 package FotoboxApp;
 use Dancer2;
 #use FotoboxApp::FotoboxMail;
-#use FotoboxApp::FotoboxGallery;
+
 
 
 my $app_path = '/var/www/FotoboxApp/';
@@ -337,4 +337,4 @@ sub countPhoto {
 	return $counter;
 }
 
-true;
+1;

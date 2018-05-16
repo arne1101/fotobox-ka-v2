@@ -8,6 +8,7 @@ use lib "$FindBin::Bin/../lib";
 
 # use this block if you don't need middleware, and only have a single target Dancer app to run here
 use FotoboxApp;
+use FotoboxApp::FotoboxGallery;
 
 FotoboxApp->to_app;
 
@@ -42,4 +43,3 @@ builder {
 =end comment
 
 =cut
-
