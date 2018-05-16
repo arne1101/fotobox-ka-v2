@@ -85,7 +85,7 @@ get '/takesinglephoto' => sub {
     $photo = takePicture();
     $singlePhoto=$photo;
 
-    redirect '/start';
+    redirect '/showsinglephoto';
 
 };
 
@@ -251,13 +251,13 @@ sub takePicture {
 				return "no-photo-error.png";
 			}
 			else {
-				# Thumbnail erstellen wenn Foto erfolgreich aufgenommen wurde
-				$thumbExec = createThumbnail($filename);
-                # Save photo to an external Deive
-                # This might slow down the time from capture to viewing the picture, maybe I should make this async
-                # Copy photo to external Drive
-                copyToExternalDrive($filename);
-				### ERGEBNIS WIRD HIER NICHT GEFRUEFT
+				    # Thumbnail erstellen wenn Foto erfolgreich aufgenommen wurde
+				    $thumbExec = createThumbnail($filename);
+            # Save photo to an external Deive
+            # This might slow down the time from capture to viewing the picture, maybe I should make this async
+            # Copy photo to external Drive
+            copyToExternalDrive($filename);
+		        ### ERGEBNIS WIRD HIER NICHT GEFRUEFT
 			}
         } else {
             # wenn keine Kamera gefunden, Fehlerbild zurueck geben
