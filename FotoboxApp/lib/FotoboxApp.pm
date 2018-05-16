@@ -97,6 +97,7 @@ get '/takesinglephoto' => sub {
 
 get '/showsinglephoto' => sub {
 
+    $do_stuff_once = 1;
     template 'fotobox_fotostrip',
         {
             'foto_filename' => $single_photo,
@@ -110,8 +111,11 @@ get '/showsinglephoto' => sub {
 get '/takephotoseries' => sub {
     my $photo;
 
-    $photo = takePicture();
-    $photos_ref->[$series_count]=$photo;
+    if ($do_stuff_once == 1) {
+      $photo = takePicture();
+      $photos_ref->[$series_count]=$photo;
+      $do_stuff_once == 0;
+    }
 
     if ($photos_ref->[$series_count] =~ m/error/) {
              redirect '/single?foto='.$photos_ref->[0];
@@ -123,9 +127,7 @@ get '/takephotoseries' => sub {
 get '/showphotoseries' => sub {
     my $photo;
 
-    $photo = takePicture();
-    $photos_ref->[$series_count]=$photo;
-
+    $do_stuff_once = 1;
 
     if ($photos_ref->[$series_count] =~ m/error/) {
              redirect '/single?foto='.$photos_ref->[0];
