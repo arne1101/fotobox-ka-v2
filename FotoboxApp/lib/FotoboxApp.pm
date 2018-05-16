@@ -425,15 +425,9 @@ get '/single' => sub {
 
     opendir DIR, $dir or die $!;
         while(my $entry = readdir DIR ){
-            if ($OptionBranding == 1) {
-                if ($entry =~ m/branding_/) {
-                    push (@gallery_foto, $entry);
-                }
-            } else {
                 if ($entry =~ m/foto_/ or $entry =~ m/strip_/) {
                    push (@gallery_foto, $entry);
                 }
-            }
         }
     closedir DIR;
 
@@ -445,9 +439,9 @@ get '/single' => sub {
     my $i = first_index { /$foto/ } @gallery_foto;
 
     # Pruefe ob naechstes Foto (=index +1) vorhanden
-    if (defined $gallery_html$gallery_foto[$i+1]) {
+    if (defined $gallery_html.$gallery_foto[$i+1]) {
         # true = setze $next auf naechstes Foto
-        $next = $gallery_html$gallery_foto[$i+1];
+        $next = $gallery_html.$gallery_foto[$i+1];
     } else {
         # false - $next = aktuelles foto
         $next = $foto;
