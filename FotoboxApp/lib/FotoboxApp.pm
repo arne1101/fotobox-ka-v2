@@ -127,7 +127,7 @@ get '/takephotoseries' => sub {
 
 get '/showphotoseries' => sub {
     my $photo;
-
+    $series_count++;
     $do_stuff_once = 1;
 
     if ($photos_ref->[$series_count] =~ m/error/) {
@@ -139,20 +139,19 @@ get '/showphotoseries' => sub {
       $redirect_uri = "montage";
     }
 
-    my $number = $series_count + 1;
-    my $number_string = $number."_4";
+    my $number = $series_count - 1;
+    my $number_string = $series_count."_4";
+
+    $series_count++;
 
     set 'layout' => 'fotobox-main';
     template 'fotobox_foto',
         {
-            'foto_filename' => $photos_ref->[$series_count],
+            'foto_filename' => $photos_ref->[$number],
             'redirect_uri' => $redirect_uri,
             'timer' => $timer,
             'number' => $number_string
         };
-
-  #  $series_count++;
-
 };
 
 # Fake-Ansicht fŸr 4er Foto
