@@ -140,9 +140,7 @@ get '/showphotoseries' => sub {
     }
 
     my $number = $series_count - 1;
-    my $number_string = $series_count."_4";
-
-    $series_count++;
+    my $number_image_string = $series_count."_4";
 
     set 'layout' => 'fotobox-main';
     template 'fotobox_foto',
@@ -150,7 +148,7 @@ get '/showphotoseries' => sub {
             'foto_filename' => $photos_ref->[$number],
             'redirect_uri' => $redirect_uri,
             'timer' => $timer,
-            'number' => $number_string
+            'number' => $number_image_string
         };
 };
 
