@@ -319,6 +319,23 @@ get '/single' => sub {
     };
 };
 
+
+get '/gif' => sub {
+    
+    my $gif = params->{foto};
+    
+    $gif =~ tr/\.jpg/\.gif/;
+    
+    set 'layout' => 'fotobox-main-gallery';
+    template 'fotobox_fotostrip',
+    {
+        'foto_filename' => $gif, 
+    };
+    
+};
+
+
+
 #Subroutines
 
 sub getPhotoPath {
@@ -407,9 +424,11 @@ sub createPhotoStrip {
 	if ($rc eq 0) {
         	# if not error
         	# create thumbail
-          createThumbnail($newPhotoStrip);
+            createThumbnail($newPhotoStrip);
 	        # copy the strip to external drive
 	        copyToExternalDrive($newPhotoStrip);
+            # create GIF
+            createGif($counter, $photos[0], $photos[1], $photos[2], $photos[3]);
             # return strip
         	return $newPhotoStrip;
 	} else {
@@ -469,15 +488,15 @@ sub countPhoto {
 sub createGif {
 
 	my $counter = shift;
-    my $foto1 = shift;
-    my $foto2 = shift;
-    my $foto3 = shift;
-    my $foto4 = shift;
+    my $photo1 = shift;
+    my $photo2 = shift;
+    my $photo3 = shift;
+    my $photo4 = shift;
 	
     my $gif  = "strip_$counter.gif";
     
     my $rc;
-    my $cmd = "convert -delay 100 -loop 0 $photoPath$foto1 $photoPath$foto2 $photoPath$foto3 $photoPath$foto4 $photoPath$gif";
+    my $cmd = "convert -delay 100 -loop 0 $photoPath$photo1 $photoPath$photo2 $photoPath$photo3 $photoPath$photo4 $photoPath$gif";
     
     $rc = system($cmd);
     
