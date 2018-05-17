@@ -408,7 +408,7 @@ sub createPhotoStrip {
 	if ($rc eq 0) {
         	# if not error
         	# create thumbail
-            createThumbnail($newPhotoStrip);
+          createThumbnail($newPhotoStrip);
 	        # copy the strip to external drive
 	        copyToExternalDrive($newPhotoStrip);
             # return strip
