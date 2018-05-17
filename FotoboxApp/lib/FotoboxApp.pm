@@ -5,8 +5,6 @@ package FotoboxApp;
 use Dancer2;
 use List::MoreUtils 'first_index'; 
 
-
-
 my $app_path = '/var/www/FotoboxApp/';
 my $photo_path = '/var/www/FotoboxApp/public/gallery/';
 my $thumbnail_path = $photo_path.'thumbs/';
@@ -374,7 +372,8 @@ sub takePicture {
 			}
         } else {
             # wenn keine Kamera gefunden, Fehlerbild zurueck geben
-            die "Kamera nicht gefunden: Detect: $return";
+            #die "Kamera nicht gefunden: Detect: $return";
+            return "no-cam-error.png";
 	}
 	return $filename;
 }
