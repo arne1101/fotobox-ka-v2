@@ -466,6 +466,34 @@ sub countPhoto {
 	return $counter;
 }
 
+sub createGif {
 
+	my $counter = shift;
+    my $foto1 = shift;
+    my $foto2 = shift;
+    my $foto3 = shift;
+    my $foto4 = shift;
+	
+    my $gif  = "strip_$counter.gif";
+    
+    my $rc;
+    my $cmd = "convert -delay 100 -loop 0 $photoPath$foto1 $photoPath$foto2 $photoPath$foto3 $photoPath$foto4 $photoPath$gif";
+    
+    $rc = system($cmd);
+    
+    if ($rc == 0) {
+        	# if not error
+	        # copy the strip to external drive
+	        copyToExternalDrive($gif);
+            # return strip
+        	return $gif;
+	} else {
+            # if error, return error
+            return "general-error.png";
+	}
+    
+    
+
+}
 
 1;
