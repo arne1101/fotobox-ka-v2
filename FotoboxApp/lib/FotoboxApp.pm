@@ -3,7 +3,6 @@ $| = 1;
 
 package FotoboxApp;
 use Dancer2;
-#use FotoboxApp::FotoboxMail;
 
 
 
