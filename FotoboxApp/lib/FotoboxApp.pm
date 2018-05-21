@@ -103,7 +103,6 @@ get '/showsinglephoto' => sub {
     template 'fotobox_fotostrip',
         {
             'foto_filename' => $single_photo,
-            'redirect_uri' => "fotostrip",
             'timer' => $timer,
             'number' => 'blank'
         };
@@ -221,11 +220,9 @@ get '/showgif' => sub {
     template 'fotobox_fotostrip',
         {
             'foto_filename' => $gif_photo,
-            'redirect_uri' => "fotostrip",
             'timer' => $timer,
             'number' => 'blank'
         };
-
 };
 
 # Gallerie
