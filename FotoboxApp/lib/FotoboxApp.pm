@@ -3,7 +3,7 @@ $| = 1;
 
 package FotoboxApp;
 use Dancer2;
-use List::MoreUtils 'first_index'; 
+use List::MoreUtils 'first_index';
 
 my $app_path = '/var/www/FotoboxApp/';
 my $photo_path = '/var/www/FotoboxApp/public/gallery/';
@@ -193,7 +193,7 @@ get '/showphotostrip' => sub {
 get '/gallery' => sub {
 
     my $dir = $thumbnail_path;
-    my $thumbnail_dir = '/gallery/thumbs/';
+    my $relative_thumbnail_path = '/gallery/thumbs/';
 
     my @gallery_foto;
     my $gallery_html;
@@ -218,7 +218,7 @@ get '/gallery' => sub {
         $gallery_html = '<div class="galleryWide">'."\n";
         my $i = 1;
         foreach (@gallery_foto) {
-                $gallery_html = $gallery_html.'<a class="th margin-10-top margin-30-right" href="single?foto='.$_.'"><img class="gallery-thumb" src="'.$thumbnail_dir.$_.'"></a>';
+                $gallery_html = $gallery_html.'<a class="th margin-10-top margin-30-right" href="single?foto='.$_.'"><img class="gallery-thumb" src="'.$relative_thumbnail_path.$_.'"></a>';
             if ($i == 50) {
                 last;
             }
@@ -239,7 +239,7 @@ get '/gallery' => sub {
 get '/random' => sub {
 
     my $dir = $thumbnail_path;
-    my $thumbnail_dir = '/gallery/thumbs/';
+    my $relative_thumbnail_path = '/gallery/thumbs/';
 
     my @gallery;
 
@@ -270,7 +270,7 @@ get '/single' => sub {
     my $last;
 
     my $dir = $thumbnail_path;
-    my $thumbnail_dir = '/gallery/thumbs/';
+    my $relative_thumbnail_path = '/gallery/thumbs/';
 
     my @gallery_foto;
     my $gallery_html;
@@ -321,17 +321,17 @@ get '/single' => sub {
 
 
 get '/gif' => sub {
-    
+
     my $gif = params->{foto};
-    
+
     $gif =~ tr/\.jpg/\.gif/;
-    
+
     set 'layout' => 'fotobox-main-gallery';
     template 'fotobox_fotostrip',
     {
-        'foto_filename' => $gif, 
+        'foto_filename' => $gif,
     };
-    
+
 };
 
 
@@ -359,8 +359,6 @@ sub takePicture {
 
 	# Pruefe ob Kamera angeschlossen. Return muss "usb:" im Text haben
 	$return =  `gphoto2 --auto-detect`;
-
-
 
       #pruefe ob kamera angeschlossen (return enhaelt USB)
       if ($return =~ m/usb:/) {
@@ -405,7 +403,6 @@ sub createThumbnail {
         return $rc;
 }
 
-
 sub createPhotoStrip {
 	# 4er Fotostreifen erstellen
 	my(@photos) = @{(shift)};
@@ -424,12 +421,10 @@ sub createPhotoStrip {
 	if ($rc eq 0) {
         	# if not error
         	# create thumbail
-            createThumbnail($newPhotoStrip);
+          createThumbnail($newPhotoStrip);
 	        # copy the strip to external drive
 	        copyToExternalDrive($newPhotoStrip);
-            # create GIF
-            createGif($counter, $photos[0], $photos[1], $photos[2], $photos[3]);
-            # return strip
+          # return strip
         	return $newPhotoStrip;
 	} else {
         # if error, return error image
@@ -439,13 +434,59 @@ sub createPhotoStrip {
 
 }
 
-sub copyToExternalDrive {
-	my $file = shift;
+sub takeGIF {
 
+  my $gif;
+	my $return;
+	my $counter;
+  my @frames;
+	my $frame_filename = "gif_frame_%02n.jpg";
+
+	# Pruefe ob Kamera angeschlossen. Return muss "usb:" im Text haben
+	$return =  `gphoto2 --auto-detect`;
+
+      #pruefe ob kamera angeschlossen (return enhaelt USB)
+      if ($return =~ m/usb:/) {
+    			# Foto aufnehmen und herunterladen
+          # --interval 2 = 2 Sekunden Interval
+          # --frames 3 = 3 Fotos
+    			my $return = `gphoto2 --capture-image-and-download --interval 2 --frames 3 --filename=$photo_path$frame_filename`;
+
+          my $iterations = 0;
+          while ($iterations <= 2) {
+            my $frame = "gif_frame_0$iterations.jpg";
+            # Pruefe ob Foto erfolgreich gespeichert wurde
+      			if (!-e $photo_path.$frame) {
+      				# wenn kein Foto gespeichert, dann Fehlerbild zurueck geben
+      				return "no-photo-error.png";
+      			}
+      			else {
+              push(@frames,$photo_path$frame);
+            }
+          }
+
+          # Bildernummer holen / erstellen
+          $counter = countPhoto();
+          # create GIF
+          $gif = createGif($counter, $frames[0], $frames[1], $frames[2]);
+
+          if (!-e $photo_path.$gif) {
+            return "no-photo-error.png";
+          } else {
+            return $gif;
+          }
+
+    } else { #end if ($return =~ m/usb:/)
+            # wenn keine Kamera gefunden, Fehlerbild zurueck geben
+            return "no-cam-error.png";
+	  }
+}
+
+sub copyToExternalDrive {
+	  my $file = shift;
     # command to copy the given file to the external Drive
     my $cmd = "sudo cp $photo_path$file $external_drive";
-
-	# run command
+	  # run command
     my $rc = system($cmd);
     if ($rc != 0) {
 		die "$cmd /n $rc";
@@ -487,31 +528,35 @@ sub countPhoto {
 
 sub createGif {
 
-	my $counter = shift;
-    my $photo1 = shift;
-    my $photo2 = shift;
-    my $photo3 = shift;
-    my $photo4 = shift;
-	
-    my $gif  = "strip_$counter.gif";
-    
-    my $rc;
-    my $cmd = "convert -delay 100 -loop 0 $photoPath$photo1 $photoPath$photo2 $photoPath$photo3 $photoPath$photo4 $photoPath$gif";
-    
-    $rc = system($cmd);
-    
+	  my $counter = shift;
+    my $frame1 = shift;
+    my $frame2 = shift;
+    my $frame3 = shift;
+
+    my $gif  = "gif_$counter.gif";
+
+
+    my $cmd = "convert -delay 100 -loop 0 $frame1 $frame2 $frame3 $photoPath$gif";
+
+    my $return_code;
+    $return_code = system($cmd);
+
+    my $delete_cmd = "sudo rm $frame1 $frame2 $frame3";
+    system($delete_cmd);
+
     if ($rc == 0) {
         	# if not error
+          # copy gif into thumbs folder for preview
+          my $copy_cmd = "sudo cp $photo_path$gif $thumbnail_path";
+          system($copy_cmd);
 	        # copy the strip to external drive
 	        copyToExternalDrive($gif);
-            # return strip
+          # return strip
         	return $gif;
 	} else {
             # if error, return error
             return "general-error.png";
 	}
-    
-    
 
 }
 
