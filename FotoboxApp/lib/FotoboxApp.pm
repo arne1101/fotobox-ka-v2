@@ -16,6 +16,7 @@ my $temp_path = '/var/tmp/';
 my $single_photo;
 my @photos;
 my $photos_ref = \@photos;
+my $gif_photo;
 my $timer = 5;
 my $photo_strip;
 my $collage = 0;
@@ -26,6 +27,7 @@ get '/' => sub {
 
     undef $single_photo;
     undef $collage;
+    undef $gif_photo;
     $collage = 0;
     undef @photos ;
     $photos_ref = \@photos;
@@ -43,6 +45,7 @@ get '/new' => sub {
 
     undef $single_photo;
     undef $collage;
+    undef $gif_photo;
     $collage = 0;
     undef @photos ;
     $photos_ref = \@photos;
@@ -189,6 +192,42 @@ get '/showphotostrip' => sub {
     };
 };
 
+get '/startgif' => sub {
+
+    set 'layout' => 'fotobox-main';
+    template 'fotobox_start',
+    {
+        'redirect_uri' => "takegif",
+    };
+
+};
+
+get '/takegif' => sub {
+
+  my $gif;
+
+  if ($do_stuff_once == 1) {
+    $gif = takeGIF();
+    $gif_photo = $gif;
+    $do_stuff_once = 0;
+  }
+  redirect '/shotgif';
+};
+
+get '/showgif' => sub {
+
+    $do_stuff_once = 1;
+    set 'layout' => 'fotobox-main';
+    template 'fotobox_fotostrip',
+        {
+            'foto_filename' => $gif_photo,
+            'redirect_uri' => "fotostrip",
+            'timer' => $timer,
+            'number' => 'blank'
+        };
+
+};
+
 # Gallerie
 get '/gallery' => sub {
 
@@ -317,21 +356,6 @@ get '/single' => sub {
         'last' => $last
 
     };
-};
-
-
-get '/gif' => sub {
-
-    my $gif = params->{foto};
-
-    $gif =~ tr/\.jpg/\.gif/;
-
-    set 'layout' => 'fotobox-main-gallery';
-    template 'fotobox_fotostrip',
-    {
-        'foto_filename' => $gif,
-    };
-
 };
 
 
