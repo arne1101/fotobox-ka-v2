@@ -3,12 +3,12 @@
      <center><img src="<% request.uri_base %>/images/<% number %>.png"> </center>
     </div>
     </div>
-    
+
     <div class="row margin-10-top">
 	<div class="small-12 columns">
 		<p>
 		<img src="<% request.uri_base %>/gallery/<% foto_filename %>">
-		
+
 		</p>
 	</div>
     </div>
@@ -23,7 +23,7 @@
       $('.timer').text(timer);
       }
      if (timer == 0) {
-      $('.timer').text("");
+      $('.timer').text("Smile!");
       location.href="<% redirect_uri %>";
      } else {
       timer--;
